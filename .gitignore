@@ -1,0 +1,8 @@
+# macOS-specific files
+.DS_Store
+
+# Ignore IntelliJ IDEA project-specific files
+.idea/
+*.iml
+*.ipr
+*.iws
