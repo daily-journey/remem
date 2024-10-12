@@ -2,6 +2,23 @@ spring:
   application:
     name: reminder
 
+  datasource:
+    url: jdbc:mysql://localhost:3306/ebbinghaus
+    username: root
+    password: 890890890
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
 springdoc:
   api-docs:
     enabled: true
