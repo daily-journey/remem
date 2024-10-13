@@ -3,7 +3,7 @@ package com.laev.reminder.dto
 import io.swagger.v3.oas.annotations.media.Schema
 
 class GetItemsResponse(
-    val id: Long,
+    val id: Int,
 
     @Schema(example = "Banana")
     val mainText: String,

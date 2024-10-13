@@ -7,7 +7,7 @@ import jakarta.persistence.Id
 @Entity
 class Item (
     @Id
-    val id: Long = 0,
+    val id: Int = 0,
 
     @Column(nullable = false)
     val mainText: String,
