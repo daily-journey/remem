@@ -10,6 +10,12 @@ spring:
     activate:
       on-profile: common
 
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    properties:
+      hibernate:
+        format_sql: true
+
 logging:
   level:
     org.hibernate.SQL: DEBUG
@@ -41,8 +47,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
-    database-platform: org.hibernate.dialect.MySQL8Dialect
 
 ---
 spring:
@@ -62,5 +66,3 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
-    show-sql: true
-    database-platform: org.hibernate.dialect.MySQL8Dialect
