@@ -1,17 +1,20 @@
 package com.laev.reminder.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
+import jakarta.persistence.*
 
 @Entity
-class Item (
+class Item(
     @Id
-    val id: Int = 0,
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    var id: Int? = null,
 
     @Column(nullable = false)
     val mainText: String,
 
     @Column
-    val subText: String,
+    val subText: String?,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    val member: Member,
 )
