@@ -6,6 +6,7 @@ import com.laev.reminder.service.ItemService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.validation.Valid
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -27,25 +28,30 @@ class ItemController(
         @Parameter(description = "ISO datetime", example = "2024-10-05T22:09:23.648Z")
         date: String?
     ): ResponseEntity<List<GetItemsResponse>> {
+        val responseHeaders = HttpHeaders()
+        responseHeaders.set("Content-Type", "application/json")
+
         val items = itemService.getItems()
 
-        return ResponseEntity.ok(
-            items.map { item ->
-                GetItemsResponse(
-                    id = item.id ?: 0,
-                    mainText = item.mainText,
-                    subText = item.subText,
-                    createDatetime = "2024-10-05T22:09:23.648Z",
-                    successCount = 0,
-                    failCount = 0,
-                    isRepeated = true,
-                    nextRemindDatetimes = listOf(
-                        "2024-10-05T22:09:23.648Z",
-                        "2024-10-12T22:09:23.648Z"
+        return ResponseEntity.ok()
+            .headers(responseHeaders)
+            .body(
+                items.map { item ->
+                    GetItemsResponse(
+                        id = item.id ?: 0,
+                        mainText = item.mainText,
+                        subText = item.subText,
+                        createDatetime = "2024-10-05T22:09:23.648Z",
+                        successCount = 0,
+                        failCount = 0,
+                        isRepeated = true,
+                        nextRemindDatetimes = listOf(
+                            "2024-10-05T22:09:23.648Z",
+                            "2024-10-12T22:09:23.648Z"
+                        )
                     )
-                )
-            }
-        )
+                }
+            )
     }
 
     @PostMapping
