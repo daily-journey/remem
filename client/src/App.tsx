@@ -1,8 +1,12 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ItemList } from "./components/item-list/item-list";
+
+const queryClient = new QueryClient();
 function App() {
   return (
-    <div>
-      <h1>Ebbinghaus Project</h1>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <ItemList />
+    </QueryClientProvider>
   );
 }
 
