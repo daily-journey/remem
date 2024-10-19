@@ -16,7 +16,7 @@ class ItemService(
 
     fun addItem(request: AddItemRequest) {
         try {
-            val member = Member(1, "Lyla")
+            val member = Member(1, "Lyla") // TODO
 
             itemRepository.save(
                 Item(
