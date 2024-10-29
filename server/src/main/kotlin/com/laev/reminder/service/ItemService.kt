@@ -7,6 +7,8 @@ import com.laev.reminder.exception.ItemCreationException
 import com.laev.reminder.repository.ItemRepository
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @Service
 class ItemService(
@@ -22,7 +24,12 @@ class ItemService(
                 Item(
                     mainText = request.mainText,
                     subText = request.subText,
+                    createDatetime = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),
+                    successCount = 0,
+                    failCount = 0,
+                    isRecurring = true,
                     member = member,
+                    periods = "",
                 )
             )
         } catch (e: DataIntegrityViolationException) {

@@ -3,6 +3,7 @@ package com.laev.reminder.controller
 import com.laev.reminder.dto.AddItemRequest
 import com.laev.reminder.dto.GetItemsResponse
 import com.laev.reminder.service.ItemService
+import com.laev.reminder.utils.TimeConverter
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.validation.Valid
@@ -41,14 +42,11 @@ class ItemController(
                         id = item.id ?: 0,
                         mainText = item.mainText,
                         subText = item.subText,
-                        createDatetime = "2024-10-05T22:09:23.648Z",
-                        successCount = 0,
-                        failCount = 0,
-                        isRepeated = true,
-                        nextRemindDatetimes = listOf(
-                            "2024-10-05T22:09:23.648Z",
-                            "2024-10-12T22:09:23.648Z"
-                        )
+                        createDatetime = TimeConverter.epochToISO(item.createDatetime),
+                        successCount = item.successCount,
+                        failCount = item.failCount,
+                        isRecurring = item.isRecurring,
+                        nextRemindDatetimes = item.periods.split(","), // TODO :: refactor delimiter
                     )
                 }
             )

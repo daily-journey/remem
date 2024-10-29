@@ -11,7 +11,7 @@ class GetItemsResponse(
     @Schema(example = "바나나", nullable = true)
     val subText: String?,
 
-    @Schema(description = "Creation datetime in ISO format", example = "2024-10-05T22:09:23.648Z")
+    @Schema(description = "Creation datetime in ISO format", example = "2024-10-05T22:09:23")
     val createDatetime: String,
 
     @Schema(description = "Number of successful attempts", example = "0")
@@ -21,8 +21,8 @@ class GetItemsResponse(
     val failCount: Int,
 
     @Schema(description = "Flag indicating if the item is repeated", example = "true")
-    val isRepeated: Boolean,
+    val isRecurring: Boolean,
 
-    @Schema(description = "List of upcoming reminder datetimes in ISO format", example = "[\"2024-10-05T22:09:23.648Z\", \"2024-10-12T22:09:23.648Z\"]")
+    @Schema(description = "List of upcoming reminder datetimes in ISO format", example = "[\"2024-10-05T22:09:23\", \"2024-10-12T22:09:23\"]")
     val nextRemindDatetimes: List<String>
 )

@@ -14,6 +14,21 @@ class Item(
     @Column
     val subText: String?,
 
+    @Column
+    val createDatetime: Long,
+
+    @Column
+    val successCount: Int,
+
+    @Column
+    val failCount: Int,
+
+    @Column
+    val isRecurring: Boolean,
+
+    @Column
+    val periods: String,
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     val member: Member,
