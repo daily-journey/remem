@@ -15,16 +15,16 @@ class Item(
     val subText: String?,
 
     @Column
-    val createDatetime: Long,
+    val createDatetime: Long = 0,
 
     @Column
-    val successCount: Int,
+    val successCount: Short = 0,
 
     @Column
-    val failCount: Int,
+    val failCount: Short = 0,
 
     @Column
-    val isRecurring: Boolean,
+    val isRecurring: Boolean = true,
 
     @Column
     val periods: String,
