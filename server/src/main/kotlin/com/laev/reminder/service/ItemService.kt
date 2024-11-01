@@ -5,10 +5,10 @@ import com.laev.reminder.entity.Item
 import com.laev.reminder.entity.Member
 import com.laev.reminder.exception.ItemCreationException
 import com.laev.reminder.repository.ItemRepository
+import com.laev.reminder.utils.CycleCaculator
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
-import java.time.ZoneOffset
+import java.time.Instant
 
 @Service
 class ItemService(
@@ -19,17 +19,20 @@ class ItemService(
     fun addItem(request: AddItemRequest) {
         try {
             val member = Member(1, "Lyla") // TODO
+            val createDatetime = Instant.now().epochSecond // save time in UTC
+            val cycles = listOf(1, 3, 7, 21)
+            val reviewDates = CycleCaculator.getReviewDates(createDatetime, cycles)
 
             itemRepository.save(
                 Item(
                     mainText = request.mainText,
                     subText = request.subText,
-                    createDatetime = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),
+                    createDatetime = createDatetime,
                     successCount = 0,
                     failCount = 0,
                     isRecurring = true,
                     member = member,
-                    periods = "",
+                    reviewDates = reviewDates.toString(),
                 )
             )
         } catch (e: DataIntegrityViolationException) {
