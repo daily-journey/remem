@@ -25,6 +25,6 @@ class GetItemsResponse(
     @get:JsonProperty("isRecurring")
     val isRecurring: Boolean,
 
-    @Schema(description = "List of upcoming reminder datetimes in ISO format", example = "[\"2024-10-05T22:09:23\", \"2024-10-12T22:09:23\"]")
-    val nextRemindDatetimes: List<String>
+    @Schema(description = "List of upcoming review datetimes in ISO format", example = "[\"2024-10-05T22:09:23\", \"2024-10-12T22:09:23\"]")
+    val reviewDates: List<String>
 )

@@ -27,7 +27,7 @@ class Item(
     val isRecurring: Boolean = true,
 
     @Column
-    val periods: String,
+    val reviewDates: String,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
