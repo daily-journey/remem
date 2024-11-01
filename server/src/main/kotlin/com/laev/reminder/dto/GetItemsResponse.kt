@@ -21,8 +21,8 @@ class GetItemsResponse(
     @Schema(description = "Number of failed attempts", example = "0")
     val failCount: Short,
 
-    @Schema(description = "Flag indicating if the item is repeated", example = "true")
-    @field:JsonProperty("isRecurring")
+    @Schema(description = "Flag indicating if the item is exposed repeatedly", example = "true")
+    @get:JsonProperty("isRecurring")
     val isRecurring: Boolean,
 
     @Schema(description = "List of upcoming reminder datetimes in ISO format", example = "[\"2024-10-05T22:09:23\", \"2024-10-12T22:09:23\"]")

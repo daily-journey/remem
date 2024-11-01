@@ -46,7 +46,10 @@ class ItemController(
                         successCount = item.successCount,
                         failCount = item.failCount,
                         isRecurring = item.isRecurring,
-                        nextRemindDatetimes = item.periods.split(","), // TODO :: refactor delimiter
+                        nextRemindDatetimes = item.periods
+                            .removePrefix("[").removeSuffix("]")
+                            .split(", ") // TODO :: refactor delimiter
+                            .map { TimeConverter.epochToISO(it.toLong()) },
                     )
                 }
             )
