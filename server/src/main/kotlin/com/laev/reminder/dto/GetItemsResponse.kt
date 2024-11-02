@@ -2,6 +2,7 @@ package com.laev.reminder.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import io.swagger.v3.oas.annotations.media.Schema
+import java.time.LocalDateTime
 
 class GetItemsResponse(
     val id: Int,
@@ -13,7 +14,7 @@ class GetItemsResponse(
     val subText: String?,
 
     @Schema(description = "Creation datetime in ISO format", example = "2024-10-05T22:09:23")
-    val createDatetime: String,
+    val createDatetime: LocalDateTime,
 
     @Schema(description = "Number of successful attempts", example = "0")
     val successCount: Short,

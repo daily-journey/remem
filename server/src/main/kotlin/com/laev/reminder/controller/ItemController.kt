@@ -42,14 +42,13 @@ class ItemController(
                         id = item.id ?: 0,
                         mainText = item.mainText,
                         subText = item.subText,
-                        createDatetime = TimeConverter.epochToISO(item.createDatetime),
+                        createDatetime = item.createDatetime,
                         successCount = item.successCount,
                         failCount = item.failCount,
                         isRecurring = item.isRecurring,
                         reviewDates = item.reviewDates
                             .removePrefix("[").removeSuffix("]")
-                            .split(", ") // TODO :: refactor delimiter
-                            .map { TimeConverter.epochToISO(it.toLong()) },
+                            .split(", "),
                     )
                 }
             )
