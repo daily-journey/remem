@@ -46,7 +46,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
 
 ---
 spring:
@@ -55,9 +55,9 @@ spring:
       on-profile: production
 
   datasource:
-    url: jdbc:mysql://mysql.railway.internal:3306/railway
-    username: ${MYSQLUSER}
-    password: ${MYSQLPASSWORD}
+    url: jdbc:mysql://${USERNAME}:${PASSWORD}@${DB_NAME}-mysql.services.clever-cloud.com:3306/${DB_NAME}
+    username: ${USERNAME}
+    password: ${PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 20
