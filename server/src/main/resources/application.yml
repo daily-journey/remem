@@ -3,7 +3,6 @@ spring:
     group:
       "local": "local,common"
       "production": "production,common"
-    active: production
 
 ---
 spring:
@@ -61,8 +60,8 @@ spring:
     password: ${PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
-      maximum-pool-size: 20
-      minimum-idle: 10
+      maximum-pool-size: 2
+      minimum-idle: 1
 
   jpa:
     hibernate:
