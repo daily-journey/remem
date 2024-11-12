@@ -6,5 +6,5 @@ export interface Item {
   successCount: number;
   failCount: number;
   reviewDates: string[];
-  repeated: boolean;
+  isRecurring: boolean;
 }
