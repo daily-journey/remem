@@ -5,6 +5,6 @@ export interface Item {
   createDatetime: string;
   successCount: number;
   failCount: number;
-  nextRemindDatetimes: string[];
+  reviewDates: string[];
   repeated: boolean;
 }

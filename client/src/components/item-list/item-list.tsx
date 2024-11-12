@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
-import { axiosApiClient } from "../../api-client";
+import { apiClient } from "../../api-client";
 
 export const ItemList = () => {
   const { data: items, isLoading: areItemsLoading } = useQuery({
     queryKey: ["todos"],
-    queryFn: axiosApiClient.getItems,
+    queryFn: apiClient.getItems,
   });
 
   return (
@@ -18,7 +18,7 @@ export const ItemList = () => {
           <p>Created at: {item.createDatetime}</p>
           <p>Successes: {item.successCount}</p>
           <p>Failures: {item.failCount}</p>
-          <p>Next remind datetimes: {item.nextRemindDatetimes.join(", ")}</p>
+          <p>Next remind datetimes: {item.reviewDates.join(", ")}</p>
           <p>Repeated: {item.repeated ? "Yes" : "No"}</p>
         </div>
       ))}

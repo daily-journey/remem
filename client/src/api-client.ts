@@ -1,24 +1,20 @@
-import axios, { type AxiosInstance } from "axios";
-import type { Item } from "./contract";
+import type { Item } from "./model/server";
 
 interface ApiClient {
   getItems(): Promise<Item[]>;
 }
 
-class AxiosApiClient implements ApiClient {
-  private apiClient: AxiosInstance;
-  constructor() {
-    this.apiClient = axios.create({
-      baseURL: import.meta.env.VITE_SERVER_URL,
-      timeout: 1000,
-      timeoutErrorMessage: "Request timed out",
-    });
-  }
+class FetchApiClient implements ApiClient {
   async getItems(): Promise<Item[]> {
-    const response = await this.apiClient.get<Item[]>("/items");
+    const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/items`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
 
-    return response.data;
+    return data;
   }
 }
 
-export const axiosApiClient = new AxiosApiClient();
+export const apiClient = new FetchApiClient();
