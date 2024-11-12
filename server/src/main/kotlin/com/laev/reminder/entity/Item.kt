@@ -3,6 +3,7 @@ package com.laev.reminder.entity
 import jakarta.persistence.*
 import java.time.Instant
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
 @Entity
@@ -18,7 +19,7 @@ class Item(
     val subText: String?,
 
     @Column
-    val createDatetime: LocalDateTime = LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC),
+    val createDatetime: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
 
     @Column
     val successCount: Short = 0,
