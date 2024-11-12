@@ -8,8 +8,7 @@ import com.laev.reminder.repository.ItemRepository
 import com.laev.reminder.utils.CycleCalculator
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
-import java.time.Instant
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 
@@ -22,7 +21,7 @@ class ItemService(
     fun addItem(request: AddItemRequest) {
         try {
             val member = Member(1, "Lyla") // TODO
-            val createDatetime = LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS) // save time in UTC
+            val createDatetime = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS) // save time in UTC
             val cycles = listOf(1, 3, 7, 21)
             val reviewDates = CycleCalculator.getReviewDates(createDatetime, cycles)
 

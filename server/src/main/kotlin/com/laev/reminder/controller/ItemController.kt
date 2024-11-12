@@ -3,7 +3,6 @@ package com.laev.reminder.controller
 import com.laev.reminder.dto.AddItemRequest
 import com.laev.reminder.dto.GetItemsResponse
 import com.laev.reminder.service.ItemService
-import com.laev.reminder.utils.TimeConverter
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.validation.Valid
