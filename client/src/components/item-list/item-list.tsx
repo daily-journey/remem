@@ -9,7 +9,6 @@ export const ItemList = () => {
 
   return (
     <div>
-      <h1>Ebbinghaus Project</h1>
       {areItemsLoading && <p>Loading...</p>}
       {items?.map((item) => (
         <div key={item.id}>
