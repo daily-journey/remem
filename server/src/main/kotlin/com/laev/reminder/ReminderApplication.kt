@@ -14,7 +14,7 @@ class ReminderApplication {
 		return object : WebMvcConfigurer {
 			override fun addCorsMappings(registry: CorsRegistry) {
 				registry.addMapping("/**") // Apply CORS settings to all endpoints
-					.allowedOrigins("http://localhost:5173") // Allowed domain
+					.allowedOrigins("http://localhost:5173", "https://daily-journey.github.io/ebbinghaus-project/") // Allowed domain
 					.allowedMethods("*") // Allow all HTTP methods
 					.allowedHeaders("*") // Allow all headers
 					.allowCredentials(true) // Allow credentials (cookies, etc.)
