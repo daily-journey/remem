@@ -3,6 +3,7 @@ spring:
     group:
       "local": "local,common"
       "production": "production,common"
+      test: "test,common"
 
 ---
 spring:
