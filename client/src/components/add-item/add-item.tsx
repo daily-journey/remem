@@ -23,6 +23,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 const formSchema = z.object({
@@ -36,6 +37,7 @@ export default function AddItem() {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -54,6 +56,7 @@ export default function AddItem() {
       });
       setError(null);
       setOpen(false);
+      await queryClient.refetchQueries({ queryKey: ["review-items"] });
     } catch (error) {
       console.error(error);
       setError("An error occurred. Please try again.");
