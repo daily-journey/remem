@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.time.OffsetDateTime
 
 @RestController
 @RequestMapping("/items")
@@ -25,13 +26,13 @@ class ItemController(
     @Operation(summary = "Get items", description = "Fetch all items or items for a specific date.")
     fun getItems(
         @RequestParam(required = false)
-        @Parameter(description = "ISO datetime", example = "2024-10-05T22:09:23.648Z")
-        date: String?
+        @Parameter(description = "ISO datetime", example = "2024-11-18T05:00:00Z")
+        datetime: OffsetDateTime?
     ): ResponseEntity<List<GetItemsResponse>> {
         val responseHeaders = HttpHeaders()
         responseHeaders.set("Content-Type", "application/json")
 
-        val items = itemService.getItems()
+        val items = itemService.getItems(datetime)
 
         return ResponseEntity.ok()
             .headers(responseHeaders)

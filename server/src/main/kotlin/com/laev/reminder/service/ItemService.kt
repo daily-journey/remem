@@ -20,7 +20,15 @@ class ItemService(
     private val itemRepository: ItemRepository,
     private val reviewDatetimeRepository: ReviewDatetimeRepository,
 ) {
-    fun getItems(): List<Item> = itemRepository.findAll()
+    fun getItems(datetime: OffsetDateTime?): List<Item> {
+        if (datetime == null) {
+            return itemRepository.findAll()
+        }
+
+        val reviewDatetimes = reviewDatetimeRepository.findByDatetimeRange(datetime)
+
+        return reviewDatetimes.map { it.item }
+    }
 
     @Transactional
     fun addItem(request: AddItemRequest) {
