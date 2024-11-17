@@ -14,7 +14,7 @@ class GetItemsResponse(
     val subText: String?,
 
     @Schema(description = "Creation datetime in ISO format", example = "2024-10-05T22:09:23Z")
-    val createDatetime: OffsetDateTime,
+    val createdDatetime: OffsetDateTime,
 
     @Schema(description = "Number of successful attempts", example = "0")
     val successCount: Short,

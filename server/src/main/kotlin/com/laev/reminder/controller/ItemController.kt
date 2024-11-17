@@ -41,7 +41,7 @@ class ItemController(
                         id = item.id ?: 0,
                         mainText = item.mainText,
                         subText = item.subText,
-                        createDatetime = item.createDatetime,
+                        createdDatetime = item.createdDatetime,
                         successCount = item.successCount,
                         failCount = item.failCount,
                         isRecurring = item.isRecurring,
