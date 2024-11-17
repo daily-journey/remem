@@ -4,7 +4,7 @@ import { useState } from "react";
 import { apiClient } from "@/api-client";
 
 import AddItem from "@/components/add-item/add-item";
-import { ItemList } from "@/components/item-list/item-list";
+import { ReviewItems } from "@/components/review-items/review-items";
 
 import { ModeToggle } from "@/components/mode-toogle";
 import { Separator } from "@/components/ui/separator";
@@ -50,11 +50,11 @@ function App() {
           </TabsList>
 
           <TabsContent value="today">
-            <ItemList isLoading={areItemsLoading} items={items} />
+            <ReviewItems isLoading={areItemsLoading} items={items} />
           </TabsContent>
 
           <TabsContent value="all">
-            <ItemList isLoading={areItemsLoading} items={items} />
+            <ReviewItems isLoading={areItemsLoading} items={items} />
           </TabsContent>
         </Tabs>
       </div>

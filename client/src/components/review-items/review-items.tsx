@@ -1,9 +1,12 @@
-import type { ReactNode } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { type ReactNode } from "react";
 
-import ItemDetail from "@/components/item-detail/item-detail";
+import { apiClient } from "@/api-client";
+import type { Item } from "@/model/server";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Drawer,
@@ -14,15 +17,70 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-
-import type { Item } from "@/model/server";
+import { toast } from "@/hooks/use-toast";
 
 interface Props {
   items?: Item[];
   isLoading: boolean;
 }
 
-export const ItemList = ({ items, isLoading }: Props) => {
+export const ReviewItems = ({ items, isLoading }: Props) => {
+  const queryClient = useQueryClient();
+  const { mutate: markAsMemorized } = useMutation({
+    mutationFn: async (id: number) => await apiClient.markAsMemorized(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["review-items"],
+      });
+      toast({
+        title: "Item marked as memorized",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Failed to mark item as memorized",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+  const { mutate: remindMeAgainLater } = useMutation({
+    mutationFn: async (id: number) => await apiClient.remindLater(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["review-items"],
+      });
+      toast({
+        title: "Item will be reminded later",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Failed to remind item later",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+  const { mutate: deleteItem } = useMutation({
+    mutationFn: async (id: number) => await apiClient.deleteItem(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["review-items"],
+      });
+      toast({
+        title: "Item deleted",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Failed to delete item",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const sorted = items?.toSorted((a, b) => {
     const aNextReviewDate = new Date(a.reviewDates[0]);
     const bNextReviewDate = new Date(b.reviewDates[0]);
@@ -48,9 +106,10 @@ export const ItemList = ({ items, isLoading }: Props) => {
           <p>Loading...</p>
         ) : (
           sorted?.map((item) => {
-            const nextReviewDate = new Date(item.reviewDates[0])
-              .toISOString()
-              .split("T")[0];
+            const reviewDates = item.reviewDates.map((date) => new Date(date));
+            const nextReviewDate = new Date(
+              item.reviewDates[0],
+            ).toLocaleString();
 
             return (
               <Drawer key={item.id}>
@@ -75,7 +134,7 @@ export const ItemList = ({ items, isLoading }: Props) => {
                       </DrawerTitle>
 
                       <DrawerDescription>
-                        <div className="mb-2">
+                        <div className="my-4">
                           <p className="leading-7 [&:not(:first-child)]:mt-6">
                             {parsingSubtext(item.subText)}
                           </p>
@@ -87,14 +146,34 @@ export const ItemList = ({ items, isLoading }: Props) => {
                           </p>
                         </div>
 
-                        <ItemDetail data={item} />
+                        <section className="flex flex-col items-center my-4">
+                          <h4 className="text-xl font-semibold tracking-tight text-black scroll-m-20">
+                            Review Dates
+                          </h4>
+
+                          <div className="text-center">
+                            <Calendar selected={reviewDates} />
+                          </div>
+                        </section>
                       </DrawerDescription>
                     </DrawerHeader>
 
                     <DrawerFooter>
-                      <Button>Memorized</Button>
-                      <Button variant="secondary">Remind me again later</Button>
-                      <Button variant="destructive">Delete</Button>
+                      <Button onClick={() => markAsMemorized(item.id)}>
+                        Memorized
+                      </Button>
+                      <Button
+                        onClick={() => remindMeAgainLater(item.id)}
+                        variant="secondary"
+                      >
+                        Remind me again later
+                      </Button>
+                      <Button
+                        onClick={() => deleteItem(item.id)}
+                        variant="destructive"
+                      >
+                        Delete
+                      </Button>
                     </DrawerFooter>
                   </div>
                 </DrawerContent>

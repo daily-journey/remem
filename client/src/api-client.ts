@@ -1,6 +1,6 @@
 import type { Item } from "./model/server";
 
-import { getDatetimeWithOffset } from "@/lib/date";
+import { getDatetime } from "@/lib/date";
 
 interface AddItemCommand {
   mainText: string;
@@ -10,12 +10,15 @@ interface AddItemCommand {
 interface ApiClient {
   getItems(criteria: "today" | "all"): Promise<Item[]>;
   addItem(item: AddItemCommand): Promise<void>;
+  markAsMemorized(itemId: number): Promise<void>;
+  remindLater(itemId: number): Promise<void>;
+  deleteItem(itemId: number): Promise<void>;
 }
 
 class FetchApiClient implements ApiClient {
   async getItems(criteria: "today" | "all"): Promise<Item[]> {
-    const date = criteria === "today" ? new Date().toISOString() : "";
-    const query = date ? `?date=${date}` : "";
+    const datetime = criteria === "today" ? new Date().toISOString() : "";
+    const query = datetime ? `?datetime=${datetime}` : "";
 
     const response = await fetch(
       `${import.meta.env.VITE_SERVER_URL}/items${query}`,
@@ -31,6 +34,8 @@ class FetchApiClient implements ApiClient {
   }
 
   async addItem(item: AddItemCommand): Promise<void> {
+    const { isoString, offset } = getDatetime();
+
     const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/items`, {
       method: "POST",
       headers: {
@@ -38,13 +43,71 @@ class FetchApiClient implements ApiClient {
       },
       body: JSON.stringify({
         ...item,
-        createdDatetime: getDatetimeWithOffset(),
+        datetime: isoString,
+        offset,
       }),
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to add item: ${response.statusText}`);
+      throw new Error(`Failed to add item: ${item.mainText}`);
     }
+  }
+
+  async markAsMemorized(itemId: number): Promise<void> {
+    const response = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/items/${itemId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          isMemorized: true,
+        }),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to mark item as memorized: ${itemId}`);
+    }
+
+    await response.json();
+  }
+
+  async remindLater(itemId: number): Promise<void> {
+    const response = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/items/${itemId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          isMemorized: false,
+        }),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to remind item: ${itemId}`);
+    }
+
+    await response.json();
+  }
+
+  async deleteItem(itemId: number): Promise<void> {
+    const response = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/items/${itemId}`,
+      {
+        method: "DELETE",
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete item: ${itemId}`);
+    }
+
+    await response.json();
   }
 }
 
