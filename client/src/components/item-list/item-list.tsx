@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import ItemDetail from "@/components/item-detail/item-detail";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
