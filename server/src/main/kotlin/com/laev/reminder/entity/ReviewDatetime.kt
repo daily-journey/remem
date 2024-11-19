@@ -7,7 +7,7 @@ import java.time.OffsetDateTime
 class ReviewDatetime(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Int? = null,
+    var id: Long? = null,
 
     @Column(nullable = false)
     val start: OffsetDateTime,
