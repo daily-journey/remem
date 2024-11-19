@@ -13,5 +13,11 @@ class Member(
     var id: Long? = null,
 
     @Column
+    val email: String,
+
+    @Column
+    val password: String,
+
+    @Column
     val name: String,
 )
