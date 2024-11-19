@@ -8,7 +8,7 @@ import java.time.ZoneOffset
 class Item(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Int? = null,
+    var id: Long? = null,
 
     @Column(nullable = false)
     val mainText: String,

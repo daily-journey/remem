@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import java.time.OffsetDateTime
 
 class GetItemsResponse(
-    val id: Int,
+    val id: Long,
 
     @Schema(example = "Banana")
     val mainText: String,
