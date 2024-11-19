@@ -17,10 +17,10 @@ class GetItemsResponse(
     val createdDatetime: OffsetDateTime,
 
     @Schema(description = "Number of successful attempts", example = "0")
-    val successCount: Short,
+    val successCount: Int,
 
     @Schema(description = "Number of failed attempts", example = "0")
-    val failCount: Short,
+    val failCount: Int,
 
     @Schema(description = "Flag indicating if the item is exposed repeatedly", example = "true")
     @get:JsonProperty("isRecurring")
