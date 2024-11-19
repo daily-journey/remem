@@ -2,19 +2,17 @@ package com.laev.reminder.controller
 
 import com.laev.reminder.dto.AddItemRequest
 import com.laev.reminder.dto.GetItemsResponse
+import com.laev.reminder.dto.UpdateMemorizationRequest
+import com.laev.reminder.exception.ItemNotFoundException
 import com.laev.reminder.service.ItemService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.validation.Valid
+import jakarta.validation.constraints.NotNull
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.time.OffsetDateTime
 
 @RestController
@@ -57,10 +55,25 @@ class ItemController(
     @PostMapping
     @Operation(summary = "Add an item")
     fun addItem(
-        @Valid @RequestBody request: AddItemRequest,
+        @RequestBody @Valid request: AddItemRequest,
     ): ResponseEntity<Void> {
         itemService.addItem(request)
 
         return ResponseEntity.status(HttpStatus.CREATED).build()
+    }
+
+    @PatchMapping("/{id}/memorization")
+    @Operation(summary = "Mark an item as memorized or not")
+    fun updateMemorization(
+        @RequestBody @Valid request: UpdateMemorizationRequest,
+        @PathVariable @NotNull(message = "ID cannot be null") id: Long,
+    ): ResponseEntity<String?> {
+        try {
+            itemService.updateMemorization(id, request.isMemorized!!, request.offset)
+        } catch (e: ItemNotFoundException) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.message)
+        }
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 }
