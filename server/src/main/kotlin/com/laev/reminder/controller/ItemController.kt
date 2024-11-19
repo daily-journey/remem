@@ -36,13 +36,14 @@ class ItemController(
             .headers(responseHeaders)
             .body(
                 items.map { item ->
+                    val count = itemService.getItemMemorizationCount(item.id!!)
                     GetItemsResponse(
                         id = item.id ?: 0,
                         mainText = item.mainText,
                         subText = item.subText,
                         createdDatetime = item.createdDatetime,
-                        successCount = item.successCount,
-                        failCount = item.failCount,
+                        successCount = count.successCount,
+                        failCount = count.failCount,
                         isRecurring = item.isRecurring,
                         reviewDates = item.reviewDates
                             .removePrefix("[").removeSuffix("]")

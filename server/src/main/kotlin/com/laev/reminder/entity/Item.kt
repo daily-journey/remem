@@ -20,12 +20,6 @@ class Item(
     val createdDatetime: OffsetDateTime = OffsetDateTime.now(ZoneOffset.UTC),
 
     @Column
-    val successCount: Short = 0,
-
-    @Column
-    val failCount: Short = 0,
-
-    @Column
     val isRecurring: Boolean = true,
 
     @Column

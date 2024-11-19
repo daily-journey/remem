@@ -10,6 +10,7 @@ import com.laev.reminder.exception.ItemNotFoundException
 import com.laev.reminder.repository.ItemRepository
 import com.laev.reminder.repository.MemorizationLogRepository
 import com.laev.reminder.repository.ReviewDatetimeRepository
+import com.laev.reminder.service.dto.ItemMemorizationCount
 import com.laev.reminder.utils.CycleCalculator
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
@@ -32,6 +33,10 @@ class ItemService(
         val reviewDatetimes = reviewDatetimeRepository.findByDatetimeRange(datetime)
 
         return reviewDatetimes.map { it.item }
+    }
+
+    fun getItemMemorizationCount(itemId: Long): ItemMemorizationCount {
+        return memorizationLogRepository.findMemorizationCountsByItemId(itemId)
     }
 
     @Transactional
