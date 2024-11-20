@@ -25,6 +25,7 @@ class FetchApiClient implements ApiClient {
       {
         headers: {
           "Content-Type": "application/json",
+          "user-token": localStorage.getItem("userToken") || "",
         },
       },
     );
@@ -54,8 +55,10 @@ class FetchApiClient implements ApiClient {
   }
 
   async markAsMemorized(itemId: number): Promise<void> {
+    const { offset } = getDatetime();
+
     const response = await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/items/${itemId}`,
+      `${import.meta.env.VITE_SERVER_URL}/items/${itemId}/memorization`,
       {
         method: "PATCH",
         headers: {
@@ -63,6 +66,7 @@ class FetchApiClient implements ApiClient {
         },
         body: JSON.stringify({
           isMemorized: true,
+          offset,
         }),
       },
     );
@@ -75,8 +79,10 @@ class FetchApiClient implements ApiClient {
   }
 
   async remindLater(itemId: number): Promise<void> {
+    const { offset } = getDatetime();
+
     const response = await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/items/${itemId}`,
+      `${import.meta.env.VITE_SERVER_URL}/items/${itemId}/memorization`,
       {
         method: "PATCH",
         headers: {
@@ -84,6 +90,7 @@ class FetchApiClient implements ApiClient {
         },
         body: JSON.stringify({
           isMemorized: false,
+          offset,
         }),
       },
     );

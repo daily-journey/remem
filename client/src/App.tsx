@@ -4,21 +4,30 @@ import { useState } from "react";
 import { apiClient } from "@/api-client";
 
 import AddItem from "@/components/add-item/add-item";
-import { ReviewItems } from "@/components/review-items/review-items";
+import ReviewItems from "@/components/review-items/review-items";
 
 import { ModeToggle } from "@/components/mode-toogle";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 function App() {
+  // const [userToken, setUserToken] = useState<string | null>(null);
   const [tab, setTab] = useState<"today" | "all">("today");
   const { data: items, isLoading: areItemsLoading } = useQuery({
     queryKey: ["review-items", tab],
-    queryFn: () => apiClient.getItems(tab),
+    queryFn: async () => await apiClient.getItems(tab),
+    // enabled: !!userToken,
   });
+
+  // useEffect(() => {
+  //   if (!userToken) {
+  //     setUserToken(localStorage.getItem("userToken"));
+  //   }
+  // }, [userToken]);
 
   return (
     <main className="flex flex-col items-center w-full">
+      {/* {userToken ? ( */}
       <div className="w-full max-w-[710px]">
         <div className="flex items-start justify-between h-12 mb-2">
           <h1 className="text-4xl font-extrabold tracking-tight scroll-m-20 lg:text-5xl page-title">
@@ -58,6 +67,9 @@ function App() {
           </TabsContent>
         </Tabs>
       </div>
+      {/** ) : ( */}
+      {/**<UserTokenForm onSubmit={(token: string) => setUserToken(token)} />*/}
+      {/** )}*/}
     </main>
   );
 }
