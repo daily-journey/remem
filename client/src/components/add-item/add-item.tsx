@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -19,13 +19,14 @@ import {
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   mainText: z.string().min(1, {
@@ -35,10 +36,11 @@ const formSchema = z.object({
 });
 
 export default function AddItem() {
+  const queryClient = useQueryClient();
+
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -55,9 +57,10 @@ export default function AddItem() {
         mainText: values.mainText,
         subText: values.subText,
       });
+      await queryClient.refetchQueries({ queryKey: ["review-items"] });
+      toast.success("Item added.");
       setError(null);
       setOpen(false);
-      await queryClient.refetchQueries({ queryKey: ["review-items"] });
     } catch (error) {
       console.error(error);
       setError("An error occurred. Please try again.");
@@ -65,6 +68,12 @@ export default function AddItem() {
       setIsLoading(false);
     }
   }
+
+  useEffect(() => {
+    if (open) {
+      form.reset();
+    }
+  }, [form, open]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -92,9 +101,6 @@ export default function AddItem() {
                     <FormControl>
                       <Input placeholder="Enter main text." {...field} />
                     </FormControl>
-                    <FormDescription>
-                      This is the main text for the item.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 );
@@ -108,11 +114,8 @@ export default function AddItem() {
                   <FormItem>
                     <FormLabel>Sub Text</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter sub text." {...field} />
+                      <Textarea placeholder="Enter sub text." {...field} />
                     </FormControl>
-                    <FormDescription>
-                      This is the sub text for the item.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 );
