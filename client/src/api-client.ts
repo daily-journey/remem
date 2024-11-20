@@ -35,7 +35,7 @@ class FetchApiClient implements ApiClient {
   }
 
   async addItem(item: AddItemCommand): Promise<void> {
-    const { isoString, offset } = getDatetime();
+    const { offset } = getDatetime();
 
     const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/items`, {
       method: "POST",
@@ -44,7 +44,6 @@ class FetchApiClient implements ApiClient {
       },
       body: JSON.stringify({
         ...item,
-        datetime: isoString,
         offset,
       }),
     });
@@ -74,8 +73,6 @@ class FetchApiClient implements ApiClient {
     if (!response.ok) {
       throw new Error(`Failed to mark item as memorized: ${itemId}`);
     }
-
-    await response.json();
   }
 
   async remindLater(itemId: number): Promise<void> {
@@ -98,8 +95,6 @@ class FetchApiClient implements ApiClient {
     if (!response.ok) {
       throw new Error(`Failed to remind item: ${itemId}`);
     }
-
-    await response.json();
   }
 
   async deleteItem(itemId: number): Promise<void> {
@@ -113,8 +108,6 @@ class FetchApiClient implements ApiClient {
     if (!response.ok) {
       throw new Error(`Failed to delete item: ${itemId}`);
     }
-
-    await response.json();
   }
 }
 
