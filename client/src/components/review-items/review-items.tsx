@@ -128,8 +128,11 @@ export default function ReviewItems({ items, isLoading }: Props) {
                     </Card>
                   </li>
                 </SheetTrigger>
-                <SheetContent side={side}>
-                  <section className="flex flex-col justify-between h-full">
+                <SheetContent
+                  side={side}
+                  className="md:w-full max-h-[100vh] overflow-auto"
+                >
+                  <section className="flex flex-col justify-between">
                     <header>
                       <SheetTitle asChild>
                         <h2 className="pb-2 text-3xl font-semibold tracking-tight border-b scroll-m-20 first:mt-0">
