@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { type ReactNode } from "react";
+import { useEffect, useState } from "react";
 
 import { apiClient } from "@/api-client";
+import { parsingSubtext } from "@/lib/text";
 import type { Item } from "@/model/server";
 
 import { Badge } from "@/components/ui/badge";
@@ -9,15 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import { toast } from "@/hooks/use-toast";
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { toast } from "sonner";
 
 interface Props {
   items?: Item[];
@@ -32,16 +30,11 @@ export default function ReviewItems({ items, isLoading }: Props) {
       queryClient.invalidateQueries({
         queryKey: ["review-items"],
       });
-      toast({
-        title: "Item marked as memorized",
-      });
+      toast.success("Item marked as memorized.");
     },
     onError: (error) => {
-      toast({
-        title: "Failed to mark item as memorized",
-        description: error.message,
-        variant: "destructive",
-      });
+      console.error(error);
+      toast.error("Failed to mark item as memorized.");
     },
   });
   const { mutate: remindMeAgainLater } = useMutation({
@@ -50,16 +43,11 @@ export default function ReviewItems({ items, isLoading }: Props) {
       queryClient.invalidateQueries({
         queryKey: ["review-items"],
       });
-      toast({
-        title: "Item will be reminded later",
-      });
+      toast.success("Item will be reminded later.");
     },
     onError: (error) => {
-      toast({
-        title: "Failed to remind item later",
-        description: error.message,
-        variant: "destructive",
-      });
+      console.error(error);
+      toast.error("Failed to remind item later.");
     },
   });
   const { mutate: deleteItem } = useMutation({
@@ -68,16 +56,11 @@ export default function ReviewItems({ items, isLoading }: Props) {
       queryClient.invalidateQueries({
         queryKey: ["review-items"],
       });
-      toast({
-        title: "Item deleted",
-      });
+      toast.success("Item deleted.");
     },
     onError: (error) => {
-      toast({
-        title: "Failed to delete item",
-        description: error.message,
-        variant: "destructive",
-      });
+      console.error(error);
+      toast.error("Failed to delete item.");
     },
   });
 
@@ -99,6 +82,29 @@ export default function ReviewItems({ items, isLoading }: Props) {
     };
   };
 
+  const [side, setSide] = useState<"bottom" | "right">("right");
+  const [innerWidth, setInnerWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    window.addEventListener("resize", () => {
+      setInnerWidth(window.innerWidth);
+    });
+
+    return () => {
+      window.removeEventListener("resize", () => {
+        setInnerWidth(window.innerWidth);
+      });
+    };
+  }, []);
+
+  useEffect(() => {
+    if (innerWidth < 768) {
+      setSide("bottom");
+    } else {
+      setSide("right");
+    }
+  }, [innerWidth]);
+
   return (
     <section>
       <ul className="flex flex-wrap justify-between gap-2 ">
@@ -112,8 +118,8 @@ export default function ReviewItems({ items, isLoading }: Props) {
             ).toLocaleString();
 
             return (
-              <Drawer key={item.id}>
-                <DrawerTrigger className="flex-grow w-full text-left md:w-auto hover:cursor-pointer">
+              <Sheet key={item.id}>
+                <SheetTrigger className="flex-grow w-full text-left md:w-auto hover:cursor-pointer">
                   <li>
                     <Card>
                       <CardHeader>
@@ -121,63 +127,62 @@ export default function ReviewItems({ items, isLoading }: Props) {
                       </CardHeader>
                     </Card>
                   </li>
-                </DrawerTrigger>
-
-                <DrawerContent>
-                  <div className="w-full max-w-sm mx-auto">
-                    <DrawerHeader>
-                      <DrawerTitle asChild>
+                </SheetTrigger>
+                <SheetContent side={side}>
+                  <section className="flex flex-col justify-between h-full">
+                    <header>
+                      <SheetTitle asChild>
                         <h2 className="pb-2 text-3xl font-semibold tracking-tight border-b scroll-m-20 first:mt-0">
                           {item.mainText}{" "}
                           <span className="text-gray-400">(#{item.id})</span>
                         </h2>
-                      </DrawerTitle>
+                      </SheetTitle>
 
-                      <DrawerDescription>
-                        <div className="my-4">
-                          <p className="leading-7 [&:not(:first-child)]:mt-6">
-                            {parsingSubtext(item.subText)}
-                          </p>
-                          <p className="leading-7 [&:not(:first-child)]:mt-6">
-                            Next review at{" "}
-                            <Badge style={randomColor()}>
-                              {nextReviewDate}
-                            </Badge>
-                          </p>
+                      <div className="my-4">
+                        <p className="leading-7 [&:not(:first-child)]:mt-6">
+                          {parsingSubtext(item.subText)}
+                        </p>
+                        <p className="leading-7 [&:not(:first-child)]:mt-6">
+                          Next review at{" "}
+                          <Badge style={randomColor()}>{nextReviewDate}</Badge>
+                        </p>
+                      </div>
+                    </header>
+
+                    <section>
+                      <div className="flex flex-col items-center my-4">
+                        <h4 className="text-xl font-semibold tracking-tight text-black scroll-m-20">
+                          Review Dates
+                        </h4>
+
+                        <div className="text-center">
+                          <Calendar selected={reviewDates} />
                         </div>
+                      </div>
+                    </section>
 
-                        <section className="flex flex-col items-center my-4">
-                          <h4 className="text-xl font-semibold tracking-tight text-black scroll-m-20">
-                            Review Dates
-                          </h4>
-
-                          <div className="text-center">
-                            <Calendar selected={reviewDates} />
-                          </div>
-                        </section>
-                      </DrawerDescription>
-                    </DrawerHeader>
-
-                    <DrawerFooter>
-                      <Button onClick={() => markAsMemorized(item.id)}>
-                        Memorized
-                      </Button>
-                      <Button
-                        onClick={() => remindMeAgainLater(item.id)}
-                        variant="secondary"
-                      >
-                        Remind me again later
-                      </Button>
-                      <Button
-                        onClick={() => deleteItem(item.id)}
-                        variant="destructive"
-                      >
-                        Delete
-                      </Button>
-                    </DrawerFooter>
-                  </div>
-                </DrawerContent>
-              </Drawer>
+                    <footer>
+                      <div className="flex flex-col w-full gap-y-4">
+                        <Button onClick={() => markAsMemorized(item.id)}>
+                          Memorized
+                        </Button>
+                        <Button
+                          onClick={() => remindMeAgainLater(item.id)}
+                          variant="secondary"
+                        >
+                          Remind me again later
+                        </Button>
+                        <Button
+                          onClick={() => deleteItem(item.id)}
+                          variant="destructive"
+                        >
+                          Delete
+                        </Button>
+                      </div>
+                    </footer>
+                  </section>
+                </SheetContent>
+              </Sheet>
             );
           })
         )}
@@ -185,30 +190,3 @@ export default function ReviewItems({ items, isLoading }: Props) {
     </section>
   );
 }
-
-const parsingSubtext = (subText: string): ReactNode => {
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  const urls = subText.match(urlRegex);
-
-  if (urls) {
-    const parsed = subText.split(urlRegex);
-
-    return parsed.map((text, index) => {
-      if (urls.includes(text)) {
-        return (
-          <a
-            key={index}
-            href={text}
-            target="_blank"
-            rel="noreferrer noopener"
-            className="underline"
-          >
-            {text}
-          </a>
-        );
-      } else {
-        return <span key={index}>{text}</span>;
-      }
-    });
-  }
-};
