@@ -24,7 +24,7 @@ interface Props {
   isLoading: boolean;
 }
 
-export const ReviewItems = ({ items, isLoading }: Props) => {
+export default function ReviewItems({ items, isLoading }: Props) {
   const queryClient = useQueryClient();
   const { mutate: markAsMemorized } = useMutation({
     mutationFn: async (id: number) => await apiClient.markAsMemorized(id),
@@ -184,7 +184,7 @@ export const ReviewItems = ({ items, isLoading }: Props) => {
       </ul>
     </section>
   );
-};
+}
 
 const parsingSubtext = (subText: string): ReactNode => {
   const urlRegex = /(https?:\/\/[^\s]+)/g;
