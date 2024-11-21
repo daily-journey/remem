@@ -1,14 +1,7 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - "server/**"
   pull_request:
-    branches:
-      - main
     paths:
       - "server/**"
 
@@ -68,18 +61,29 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    environment: production
+    environment: production # use Github Actions' `production` environment
     needs: test # deploy only if tests pass
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Deploy to Render
+      - name: Deploy
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          TEST_SERVICE_ID: ${{ secrets.TEST_SERVICE_ID }}
+          PROD_SERVICE_ID: ${{ secrets.PROD_SERVICE_ID }}
         run: |
-          curl -X POST \
-          -H "Authorization: Bearer $RENDER_API_KEY" \
-          -H "Content-Type: application/json" \
-          https://api.render.com/v1/services/<service-id>/deploys
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "Deploying to Test Environment..."
+            curl -X POST \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            https://api.render.com/v1/services/${{ env.TEST_SERVICE_ID }}/deploys
+          else
+            echo "Deploying to Production Environment..."
+            curl -X POST \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            https://api.render.com/v1/services/${{ env.PROD_SERVICE_ID }}/deploys
+          fi
