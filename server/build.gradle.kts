@@ -26,10 +26,10 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
 	implementation("mysql:mysql-connector-java:8.0.33")
-	implementation("com.h2database:h2")
 	testImplementation("org.springframework.boot:spring-boot-starter-test") // Spring Boot starter test for core test utilities and JUnit 5
 	testImplementation("io.mockk:mockk:1.13.4") // MockK for Kotlin-friendly mocking
 	testImplementation("com.ninja-squad:springmockk:4.0.2") // SpringMockK for integration with Spring's @MockBean
+	testImplementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 }
 
 kotlin {
