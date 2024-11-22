@@ -1,4 +1,4 @@
-package com.laev.reminder.controller
+package com.laev.reminder.integration
 
 import com.laev.reminder.dto.AddItemRequest
 import com.laev.reminder.entity.Item
@@ -21,7 +21,7 @@ import java.time.ZoneOffset
 @SpringBootTest
 @TestPropertySource(locations = ["classpath:application-test.yml"])
 @AutoConfigureMockMvc
-class ItemControllerIntegrationTest(
+class ItemTest(
     @Autowired private val mockMvc: MockMvc,
     @Autowired private val memberRepository: MemberRepository,
     @Autowired private val itemRepository: ItemRepository,
