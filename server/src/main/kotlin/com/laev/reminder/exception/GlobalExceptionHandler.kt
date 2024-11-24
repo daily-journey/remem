@@ -14,4 +14,11 @@ class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(mapOf("error" to errorMessage))
     }
+
+    @ExceptionHandler(EmailAlreadyExistsException::class)
+    fun handleEmailAlreadyExistsException(ex: EmailAlreadyExistsException): ResponseEntity<Map<String, String>> {
+        val errorMessage = "The email '${ex.email}' is already registered."
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(mapOf("error" to errorMessage))
+    }
 }
