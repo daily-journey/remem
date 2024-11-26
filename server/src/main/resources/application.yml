@@ -18,10 +18,15 @@ spring:
         format_sql: true
         use_sql_comments: true
 
+security:
+  jwt:
+    secret-key: secure-secret-key-which-is-at-least-32-characters-long
+
 logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.security: DEBUG
 
 springdoc:
   api-docs:
@@ -68,3 +73,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+
+security:
+  jwt:
+    secret-key: ${JWT_SECRET_KEY:default-secure-key-must-be-32-characters-long}
