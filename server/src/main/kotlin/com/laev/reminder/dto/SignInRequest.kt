@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotNull
 import org.hibernate.validator.constraints.Length
 
-class SignUpRequest(
+class SignInRequest(
     @field:ValidEmail
     @Schema(nullable = false, example = "test@example.com")
     val email: String,
@@ -14,8 +14,4 @@ class SignUpRequest(
     @field:NotNull
     @Schema(nullable = false)
     val password: String,
-
-    @field:NotNull
-    @Schema(nullable = false)
-    val name: String,
 )

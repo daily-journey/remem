@@ -26,6 +26,10 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
 	implementation("mysql:mysql-connector-java:8.0.33")
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 	testImplementation("org.springframework.boot:spring-boot-starter-test") // Spring Boot starter test for core test utilities and JUnit 5
 	testImplementation("io.mockk:mockk:1.13.4") // MockK for Kotlin-friendly mocking
 	testImplementation("com.ninja-squad:springmockk:4.0.2") // SpringMockK for integration with Spring's @MockBean
