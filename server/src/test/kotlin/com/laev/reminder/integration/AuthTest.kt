@@ -1,27 +1,27 @@
 package com.laev.reminder.integration
 
+import com.laev.reminder.dto.SignInRequest
 import com.laev.reminder.dto.SignUpRequest
-import com.laev.reminder.entity.Member
-import com.laev.reminder.repository.MemberRepository
 import com.laev.reminder.utils.ObjectMapperUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class AuthTest(
-    @Autowired private val mockMvc: MockMvc,
-    @Autowired private val memberRepository: MemberRepository,
-) {
+class AuthTest: BaseIntegrationTest() {
     private val objectMapper = ObjectMapperUtil.createObjectMapper()
+
+    @BeforeEach
+    fun setUp() {
+        memberRepository.deleteAll()
+    }
 
     @Test
     fun `Sign up should create a new member when the input is valid`() {
@@ -65,7 +65,7 @@ class AuthTest(
     @Test
     fun `When signing up, the email must not be duplicated with existing email`() {
         val duplicatedEmail = "duplicate@example.com"
-        createMember(duplicatedEmail)
+        createOrGetMember(duplicatedEmail)
 
         val request = SignUpRequest(
             email = duplicatedEmail,
@@ -90,13 +90,53 @@ class AuthTest(
             .andExpect(MockMvcResultMatchers.status().isBadRequest)
     }
 
+    @Test
+    fun `Sign in should return a JWT token in a cookie when credentials are valid`() {
+        // create a member
+        val email = "new@example.com"
+        val password = "123456789_123456789_123456789_abcdef"
+        createOrGetMember(email, password, "tester")
+
+        // sign-in
+        val signInRequest = SignInRequest(email, password)
+
+        val result = mockMvc.perform(
+            MockMvcRequestBuilders.post("/auth/sign-in")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(signInRequest))
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.header().exists("Set-Cookie"))
+            .andReturn()
+
+        // check JWT token in cookie
+        val cookieHeader = result.response.getHeader("Set-Cookie")
+        assertNotNull(cookieHeader)
+        cookieHeader?.let { assert(it.contains("jwt=")) }
+    }
+
+    @Test
+    fun `Sign in should return unauthorized when credentials are invalid`() {
+        // create a member
+        val email = "test@example.com"
+        val password = "123456789_123456789_123456789_abcdef"
+        createOrGetMember(email, password, "tester")
+
+        // sign-in with wrong password
+        val invalidLoginRequest = SignInRequest(email, "123456789_123456789_123456789_wrong_password")
+
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/auth/sign-in")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(invalidLoginRequest))
+        )
+            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("Invalid email or password"))
+    }
+
     private fun performPostSignUp(request: SignUpRequest) = mockMvc.perform(
         MockMvcRequestBuilders.post("/auth/sign-up")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(request))
     )
-
-    private fun createMember(email: String, password: String = "default_password", name: String = "default_name") {
-        memberRepository.save(Member(email = email, password = password, name = name))
-    }
 }
