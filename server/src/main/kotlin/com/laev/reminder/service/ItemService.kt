@@ -40,9 +40,8 @@ class ItemService(
     }
 
     @Transactional
-    fun addItem(request: AddItemRequest) {
+    fun addItem(request: AddItemRequest, member: Member) {
         try {
-            val member = Member(1, "test@test.com", "0000", "Lyla") // TODO
             val createDatetime = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS) // save time in UTC
             val cycles = listOf(1, 3, 7, 21)
             val reviewDates = CycleCalculator.getReviewDates(createDatetime, cycles)
