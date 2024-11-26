@@ -4,6 +4,7 @@ import com.laev.reminder.dto.AddItemRequest
 import com.laev.reminder.dto.GetItemsResponse
 import com.laev.reminder.dto.UpdateMemorizationRequest
 import com.laev.reminder.exception.ItemNotFoundException
+import com.laev.reminder.service.AuthService
 import com.laev.reminder.service.ItemService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -19,6 +20,7 @@ import java.time.OffsetDateTime
 @RequestMapping("/items")
 class ItemController(
     private val itemService: ItemService,
+    private val authService: AuthService,
 ) {
     @GetMapping
     @Operation(summary = "Get items", description = "Fetch all items or items for a specific date.")
@@ -57,8 +59,10 @@ class ItemController(
     @Operation(summary = "Add an item")
     fun addItem(
         @RequestBody @Valid request: AddItemRequest,
+        @RequestHeader("Authorization") authorizationHeader: String,
     ): ResponseEntity<Void> {
-        itemService.addItem(request)
+        val member = authService.getMemberFromToken(authorizationHeader)
+        itemService.addItem(request, member)
 
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
