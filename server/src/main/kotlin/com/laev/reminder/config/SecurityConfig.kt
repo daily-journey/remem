@@ -21,7 +21,10 @@ class SecurityConfig {
             .csrf { it.disable() } // Disable CSRF protection
             .authorizeHttpRequests { requests ->
                 requests
-                    .requestMatchers("/auth/sign-up", "/auth/sign-in").permitAll() // Allow access to sign-up and sign-in endpoints without authentication
+                    .requestMatchers(
+                        "/auth/sign-up", "/auth/sign-in",
+                        "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html",
+                    ).permitAll() // Allow access to sign-up and sign-in and Swagger endpoints without authentication
                     .anyRequest().authenticated() // Require authentication for all other requests
             }
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java) // Add JWT filter before UsernamePasswordAuthenticationFilter
