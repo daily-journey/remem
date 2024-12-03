@@ -5,7 +5,7 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
 @Entity
-class Item(
+class ReviewItem(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,

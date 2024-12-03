@@ -17,5 +17,5 @@ class ReviewDatetime(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "item_id", nullable = false)
-    val item: Item,
+    val reviewItem: ReviewItem,
 )
