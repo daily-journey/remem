@@ -1,16 +1,16 @@
 package com.laev.reminder.service
 
 import com.laev.reminder.dto.AddItemRequest
-import com.laev.reminder.entity.Item
+import com.laev.reminder.entity.ReviewItem
 import com.laev.reminder.entity.Member
 import com.laev.reminder.entity.MemorizationLog
 import com.laev.reminder.entity.ReviewDatetime
 import com.laev.reminder.exception.ItemCreationException
 import com.laev.reminder.exception.ItemNotFoundException
-import com.laev.reminder.repository.ItemRepository
+import com.laev.reminder.repository.ReviewItemRepository
 import com.laev.reminder.repository.MemorizationLogRepository
 import com.laev.reminder.repository.ReviewDatetimeRepository
-import com.laev.reminder.service.dto.ItemMemorizationCount
+import com.laev.reminder.service.dto.ReviewItemMemorizationCount
 import com.laev.reminder.utils.CycleCalculator
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
@@ -20,27 +20,27 @@ import java.time.ZoneOffset
 import java.time.temporal.ChronoUnit
 
 @Service
-class ItemService(
-    private val itemRepository: ItemRepository,
+class ReviewItemService(
+    private val reviewItemRepository: ReviewItemRepository,
     private val reviewDatetimeRepository: ReviewDatetimeRepository,
     private val memorizationLogRepository: MemorizationLogRepository,
 ) {
-    fun getItems(datetime: OffsetDateTime?): List<Item> {
+    fun getReviewItems(datetime: OffsetDateTime?): List<ReviewItem> {
         if (datetime == null) {
-            return itemRepository.findAll()
+            return reviewItemRepository.findAll()
         }
 
         val reviewDatetimes = reviewDatetimeRepository.findByDatetimeRange(datetime)
 
-        return reviewDatetimes.map { it.item }
+        return reviewDatetimes.map { it.reviewItem }
     }
 
-    fun getItemMemorizationCount(itemId: Long): ItemMemorizationCount {
+    fun getReviewItemMemorizationCount(itemId: Long): ReviewItemMemorizationCount {
         return memorizationLogRepository.findMemorizationCountsByItemId(itemId)
     }
 
     @Transactional
-    fun addItem(request: AddItemRequest, member: Member) {
+    fun addReviewItem(request: AddItemRequest, member: Member) {
         try {
             val createDatetime = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS) // save time in UTC
             val cycles = listOf(1, 3, 7, 21)
@@ -49,8 +49,8 @@ class ItemService(
             val zoneOffset = request.offset.toZoneOffset()
             val zonedCreatedDatetime = createDatetime.withOffsetSameInstant(zoneOffset) // Convert to local time with the applied zoneOffset
 
-            val newItem = itemRepository.save(
-                Item(
+            val newReviewItem = reviewItemRepository.save(
+                ReviewItem(
                     mainText = request.mainText,
                     subText = request.subText,
                     member = member,
@@ -66,7 +66,7 @@ class ItemService(
                     ReviewDatetime(
                         start = startDatetime,
                         end = endDatetime,
-                        item = newItem,
+                        reviewItem = newReviewItem,
                     )
                 )
             }
@@ -79,7 +79,7 @@ class ItemService(
 
     @Transactional
     fun updateMemorization(itemId: Long, isMemorized: Boolean, offset: ZoneOffset) {
-        val item = itemRepository.findById(itemId).orElseThrow {
+        val item = reviewItemRepository.findById(itemId).orElseThrow {
             ItemNotFoundException(itemId)
         }
         createMemorizationLog(isMemorized, item)
@@ -90,14 +90,14 @@ class ItemService(
         }
     }
 
-    private fun createMemorizationLog(isMemorized: Boolean, item: Item) {
+    private fun createMemorizationLog(isMemorized: Boolean, reviewItem: ReviewItem) {
         val createdDatetime = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
 
         memorizationLogRepository.save(
             MemorizationLog(
                 isMemorized = isMemorized,
                 createdDatetime = createdDatetime,
-                item = item,
+                reviewItem = reviewItem,
             )
         )
     }
@@ -108,7 +108,7 @@ class ItemService(
         val zonedCreatedDatetime = createdDatetime.withOffsetSameInstant(zoneOffset)
         val startDatetime = CycleCalculator.getUTCStartDatetime(zonedCreatedDatetime, cycle, zoneOffset)
         val endDatetime = startDatetime.plusHours(24)
-        val item = itemRepository.getReferenceById(itemId)
+        val item = reviewItemRepository.getReferenceById(itemId)
 
         // avoid duplicated row insertion
         val duplicatedReviewDatetime = reviewDatetimeRepository.findByStartAndItemId(startDatetime, itemId)
@@ -117,7 +117,7 @@ class ItemService(
                 ReviewDatetime(
                     start = startDatetime,
                     end = endDatetime,
-                    item = item
+                    reviewItem = item
                 )
             )
         }

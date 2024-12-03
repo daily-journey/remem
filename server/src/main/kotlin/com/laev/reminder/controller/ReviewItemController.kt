@@ -5,7 +5,7 @@ import com.laev.reminder.dto.GetItemsResponse
 import com.laev.reminder.dto.UpdateMemorizationRequest
 import com.laev.reminder.exception.ItemNotFoundException
 import com.laev.reminder.service.AuthService
-import com.laev.reminder.service.ItemService
+import com.laev.reminder.service.ReviewItemService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
 import jakarta.validation.Valid
@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.*
 import java.time.OffsetDateTime
 
 @RestController
-@RequestMapping("/items")
-class ItemController(
-    private val itemService: ItemService,
+@RequestMapping("/review-items")
+class ReviewItemController(
+    private val reviewItemService: ReviewItemService,
     private val authService: AuthService,
 ) {
     @GetMapping
@@ -32,13 +32,13 @@ class ItemController(
         val responseHeaders = HttpHeaders()
         responseHeaders.set("Content-Type", "application/json")
 
-        val items = itemService.getItems(datetime)
+        val items = reviewItemService.getReviewItems(datetime)
 
         return ResponseEntity.ok()
             .headers(responseHeaders)
             .body(
                 items.map { item ->
-                    val count = itemService.getItemMemorizationCount(item.id!!)
+                    val count = reviewItemService.getReviewItemMemorizationCount(item.id!!)
                     GetItemsResponse(
                         id = item.id ?: 0,
                         mainText = item.mainText,
@@ -62,7 +62,7 @@ class ItemController(
         @RequestHeader("Authorization") authorizationHeader: String,
     ): ResponseEntity<Void> {
         val member = authService.getMemberFromToken(authorizationHeader)
-        itemService.addItem(request, member)
+        reviewItemService.addReviewItem(request, member)
 
         return ResponseEntity.status(HttpStatus.CREATED).build()
     }
@@ -74,7 +74,7 @@ class ItemController(
         @PathVariable @NotNull(message = "ID cannot be null") id: Long,
     ): ResponseEntity<String?> {
         try {
-            itemService.updateMemorization(id, request.isMemorized!!, request.offset)
+            reviewItemService.updateMemorization(id, request.isMemorized!!, request.offset)
         } catch (e: ItemNotFoundException) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.message)
         }

@@ -1,9 +1,12 @@
 package com.laev.reminder.integration
 
 import com.laev.reminder.dto.AddItemRequest
-import com.laev.reminder.entity.Item
-import com.laev.reminder.repository.ItemRepository
+import com.laev.reminder.entity.ReviewItem
+import com.laev.reminder.repository.MemorizationLogRepository
+import com.laev.reminder.repository.ReviewDatetimeRepository
+import com.laev.reminder.repository.ReviewItemRepository
 import com.laev.reminder.utils.ObjectMapperUtil
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,22 +19,31 @@ import java.time.ZoneOffset
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class ItemTest(
-    @Autowired private val itemRepository: ItemRepository,
+class ReviewItemTest(
+    @Autowired private val reviewItemRepository: ReviewItemRepository,
+    @Autowired private val memorizationLogRepository: MemorizationLogRepository,
+    @Autowired private val reviewDatetimeRepository: ReviewDatetimeRepository,
 ) : BaseIntegrationTest() {
     private val objectMapper = ObjectMapperUtil.createObjectMapper()
 
     @BeforeEach
     fun setUp() {
         val testMember = createOrGetMember("test@example.com")
-        itemRepository.save(
-            Item(
+        reviewItemRepository.save(
+            ReviewItem(
                 mainText = "setup item",
                 subText = "",
                 reviewDates = "",
                 member = testMember,
             )
         )
+    }
+
+    @AfterEach
+    fun tearDown() {
+        memorizationLogRepository.deleteAll()
+        reviewDatetimeRepository.deleteAll()
+        reviewItemRepository.deleteAll()
     }
 
     @Test
@@ -44,7 +56,7 @@ class ItemTest(
 
         mockMvc.perform(
             withAuth(
-                MockMvcRequestBuilders.post("/items")
+                MockMvcRequestBuilders.post("/review-items")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request))
             )
@@ -55,7 +67,7 @@ class ItemTest(
     fun `fetch items from database`() {
         mockMvc.perform(
             withAuth(
-                MockMvcRequestBuilders.get("/items")
+                MockMvcRequestBuilders.get("/review-items")
                     .accept(MediaType.APPLICATION_JSON)
             )
         )
