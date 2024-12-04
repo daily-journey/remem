@@ -67,6 +67,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }} # Explicitly checkout the PR commit
 
       - name: Deploy
         env:
