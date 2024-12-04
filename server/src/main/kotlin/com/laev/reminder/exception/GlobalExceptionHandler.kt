@@ -29,6 +29,16 @@ class GlobalExceptionHandler {
         return createErrorResponse(errorMessage, status)
     }
 
+    @ExceptionHandler(ItemNotFoundException::class)
+    fun handleItemNotFoundException(e: ItemNotFoundException): ResponseEntity<String> {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.message)
+    }
+
+    @ExceptionHandler(ItemAlreadyDeletedException::class)
+    fun handleItemAlreadyDeletedException(e: ItemAlreadyDeletedException): ResponseEntity<String> {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.message)
+    }
+
     // Utility function for creating consistent error responses
     private fun createErrorResponse(message: String, status: HttpStatus): ResponseEntity<Map<String, String>> {
         return ResponseEntity.status(status).body(mapOf("error" to message))

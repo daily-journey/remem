@@ -5,6 +5,7 @@ import com.laev.reminder.entity.ReviewItem
 import com.laev.reminder.entity.Member
 import com.laev.reminder.entity.MemorizationLog
 import com.laev.reminder.entity.ReviewDatetime
+import com.laev.reminder.exception.ItemAlreadyDeletedException
 import com.laev.reminder.exception.ItemCreationException
 import com.laev.reminder.exception.ItemNotFoundException
 import com.laev.reminder.repository.ReviewItemRepository
@@ -126,5 +127,19 @@ class ReviewItemService(
     private fun ZoneOffset.toZoneOffset(): ZoneOffset {
         val offsetHours = this.totalSeconds / 3600 // Convert the offset to hours
         return ZoneOffset.ofHours(offsetHours)
+    }
+
+    @Transactional
+    fun deleteReviewItem(itemId: Long) {
+        val item = reviewItemRepository.findById(itemId).orElseThrow {
+            ItemNotFoundException(itemId)
+        }
+
+        if (item.isDeleted) {
+            throw ItemAlreadyDeletedException()
+        }
+
+        item.isDeleted = true
+        reviewItemRepository.save(item)
     }
 }
