@@ -76,14 +76,26 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             echo "Deploying to Test Environment..."
-            curl -X POST \
-            -H "Authorization: Bearer $RENDER_API_KEY" \
-            -H "Content-Type: application/json" \
-            https://api.render.com/v1/services/${{ env.TEST_SERVICE_ID }}/deploys
+            RESPONSE=$(curl -X POST \
+              -H "Authorization: Bearer $RENDER_API_KEY" \
+              -H "Content-Type: application/json" \
+              https://api.render.com/v1/services/${{ env.TEST_SERVICE_ID }}/deploys \
+              -w "%{http_code}" -o /dev/null)
+          
+            if [ "$RESPONSE" -ne 201 ]; then
+              echo "Test environment deployment failed with HTTP status: $RESPONSE"
+              exit 1
+            fi
           else
             echo "Deploying to Production Environment..."
-            curl -X POST \
-            -H "Authorization: Bearer $RENDER_API_KEY" \
-            -H "Content-Type: application/json" \
-            https://api.render.com/v1/services/${{ env.PROD_SERVICE_ID }}/deploys
+            RESPONSE=$(curl -X POST \
+              -H "Authorization: Bearer $RENDER_API_KEY" \
+              -H "Content-Type: application/json" \
+              https://api.render.com/v1/services/${{ env.PROD_SERVICE_ID }}/deploys \
+              -w "%{http_code}" -o /dev/null)
+          
+            if [ "$RESPONSE" -ne 201 ]; then
+              echo "Production deployment failed with HTTP status: $RESPONSE"
+              exit 1
+            fi
           fi
