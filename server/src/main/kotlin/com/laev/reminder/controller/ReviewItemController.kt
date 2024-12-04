@@ -3,7 +3,6 @@ package com.laev.reminder.controller
 import com.laev.reminder.dto.AddItemRequest
 import com.laev.reminder.dto.GetItemsResponse
 import com.laev.reminder.dto.UpdateMemorizationRequest
-import com.laev.reminder.exception.ItemNotFoundException
 import com.laev.reminder.service.AuthService
 import com.laev.reminder.service.ReviewItemService
 import io.swagger.v3.oas.annotations.Operation
@@ -71,14 +70,18 @@ class ReviewItemController(
     @Operation(summary = "Mark an item as memorized or not")
     fun updateMemorization(
         @RequestBody @Valid request: UpdateMemorizationRequest,
-        @PathVariable @NotNull(message = "ID cannot be null") id: Long,
-    ): ResponseEntity<String?> {
-        try {
-            reviewItemService.updateMemorization(id, request.isMemorized!!, request.offset)
-        } catch (e: ItemNotFoundException) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.message)
-        }
-
+        @PathVariable @NotNull(message = "Item id cannot be null") id: Long,
+    ): ResponseEntity<Void> {
+        reviewItemService.updateMemorization(id, request.isMemorized!!, request.offset)
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Delete an item")
+    fun deleteItem(
+        @PathVariable @NotNull(message = "Item id cannot be null") id: Long,
+    ): ResponseEntity<String> {
+        reviewItemService.deleteReviewItem(id)
+        return ResponseEntity.ok("Item deleted successfully.")
     }
 }

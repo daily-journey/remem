@@ -25,6 +25,9 @@ class ReviewItem(
     @Column
     val reviewDates: String,
 
+    @Column
+    var isDeleted: Boolean = false,
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     val member: Member,
