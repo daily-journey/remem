@@ -7,15 +7,62 @@ interface AddItemCommand {
   subText?: string;
 }
 
+interface SignUpCommand {
+  name: string;
+  email: string;
+  password: string;
+}
+
+interface SignInCommand {
+  email: string;
+  password: string;
+}
+
 interface ApiClient {
   getItems(criteria: "today" | "all"): Promise<Item[]>;
   addItem(item: AddItemCommand): Promise<void>;
   markAsMemorized(itemId: number): Promise<void>;
   remindLater(itemId: number): Promise<void>;
   deleteItem(itemId: number): Promise<void>;
+
+  signUp(command: SignUpCommand): Promise<void>;
+  signIn(command: SignInCommand): Promise<void>;
 }
 
 class FetchApiClient implements ApiClient {
+  async signIn(command: SignInCommand): Promise<void> {
+    const response = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/auth/sign-in`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(command),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to sign in: ${command.email}`);
+    }
+  }
+  async signUp(command: SignUpCommand): Promise<void> {
+    const response = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/auth/sign-up`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(command),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to sign up: ${command.email}`);
+    }
+  }
   async getItems(criteria: "today" | "all"): Promise<Item[]> {
     const datetime = criteria === "today" ? new Date().toISOString() : "";
     const query = datetime ? `?datetime=${datetime}` : "";
@@ -25,7 +72,6 @@ class FetchApiClient implements ApiClient {
       {
         headers: {
           "Content-Type": "application/json",
-          "user-token": localStorage.getItem("userToken") || "",
         },
       },
     );
