@@ -112,7 +112,7 @@ class AuthTest: BaseIntegrationTest() {
         // check JWT token in cookie
         val cookieHeader = result.response.getHeader("Set-Cookie")
         assertNotNull(cookieHeader)
-        cookieHeader?.let { assert(it.contains("jwt=")) }
+        cookieHeader?.let { assert(it.contains("Authorization=")) }
     }
 
     @Test
