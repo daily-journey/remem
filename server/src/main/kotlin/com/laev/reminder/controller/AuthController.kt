@@ -3,6 +3,7 @@ package com.laev.reminder.controller
 import com.laev.reminder.dto.SignInRequest
 import com.laev.reminder.dto.SignUpRequest
 import com.laev.reminder.service.AuthService
+import jakarta.servlet.http.HttpServletRequest
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseCookie
@@ -29,13 +30,14 @@ class AuthController(
     @PostMapping("/sign-in")
     fun signIn(
         @RequestBody @Valid request: SignInRequest,
+        httpRequest: HttpServletRequest,
     ): ResponseEntity<String> {
         val token = authService.signIn(request.email, request.password)
-
-        val cookie = ResponseCookie.from("jwt", token)
+        val cookie = ResponseCookie.from("Authorization", token)
             .httpOnly(true)
             .path("/")
-            .maxAge(-1)
+            .maxAge(86400)
+            .sameSite("None")
             .secure(true)
             .build()
 
