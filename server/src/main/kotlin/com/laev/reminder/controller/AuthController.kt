@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.net.URI
 
 @RestController
 @RequestMapping("/auth")
@@ -33,7 +34,10 @@ class AuthController(
         httpRequest: HttpServletRequest,
     ): ResponseEntity<String> {
         val token = authService.signIn(request.email, request.password)
+        val requestOrigin = httpRequest.getHeader("origin") ?: "http://localhost:5173"
+        val domain = URI(requestOrigin).host
         val cookie = ResponseCookie.from("Authorization", token)
+            .domain(domain)
             .httpOnly(true)
             .path("/")
             .maxAge(86400)
