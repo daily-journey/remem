@@ -91,7 +91,7 @@ class AuthTest: BaseIntegrationTest() {
     }
 
     @Test
-    fun `Sign in should return a JWT token in a cookie when credentials are valid`() {
+    fun `Sign in should return a JWT token in the Authorization header when credentials are valid`() {
         // create a member
         val email = "new@example.com"
         val password = "123456789_123456789_123456789_abcdef"
@@ -106,13 +106,13 @@ class AuthTest: BaseIntegrationTest() {
                 .content(objectMapper.writeValueAsString(signInRequest))
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
-            .andExpect(MockMvcResultMatchers.header().exists("Set-Cookie"))
+            .andExpect(MockMvcResultMatchers.header().exists("Authorization"))
             .andReturn()
 
-        // check JWT token in cookie
-        val cookieHeader = result.response.getHeader("Set-Cookie")
-        assertNotNull(cookieHeader)
-        cookieHeader?.let { assert(it.contains("Authorization=")) }
+        // check JWT token in Authorization header
+        val authorizationHeader = result.response.getHeader("Authorization")
+        assertNotNull(authorizationHeader)
+        authorizationHeader?.let { assert(it.startsWith("Bearer ")) }
     }
 
     @Test
