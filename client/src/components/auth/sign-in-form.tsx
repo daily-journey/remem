@@ -11,6 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { useCookies } from "react-cookie";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -36,13 +37,17 @@ interface Props {
 }
 
 export default function SignInForm({ showSignUpForm }: Props) {
+  const [cookies, setCookie, removeCookie] = useCookies(["Authorization"]);
   const { mutate: signIn } = useMutation({
-    mutationFn: async (command: SignInFormValues) =>
-      await apiClient.signIn(command),
-    onSuccess: () => {
+    mutationFn: async (command: SignInFormValues) => {
+      return await apiClient.signIn(command);
+    },
+    onSuccess: ({ accessToken }) => {
+      setCookie("Authorization", accessToken, { maxAge: 60 * 60 * 24 });
       toast.success("Sign in successfully");
     },
     onError: (error) => {
+      removeCookie("Authorization");
       console.error(error);
       toast.error("Failed to sign in");
     },

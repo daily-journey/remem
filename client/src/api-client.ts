@@ -1,5 +1,6 @@
 import type { Item } from "./model/server";
 
+import { getCookieValue } from "@/lib/cookie";
 import { getDatetime } from "@/lib/date";
 
 interface AddItemCommand {
@@ -26,11 +27,13 @@ interface ApiClient {
   deleteItem(itemId: number): Promise<void>;
 
   signUp(command: SignUpCommand): Promise<void>;
-  signIn(command: SignInCommand): Promise<void>;
+  signIn(command: SignInCommand): Promise<{ accessToken: string }>;
 }
 
 class FetchApiClient implements ApiClient {
-  async signIn(command: SignInCommand): Promise<void> {
+  async signIn(command: SignInCommand): Promise<{
+    accessToken: string;
+  }> {
     const response = await fetch(
       `${import.meta.env.VITE_SERVER_URL}/auth/sign-in`,
       {
@@ -46,6 +49,16 @@ class FetchApiClient implements ApiClient {
     if (!response.ok) {
       throw new Error(`Failed to sign in: ${command.email}`);
     }
+
+    const accessToken = response.headers.get("authorization");
+
+    if (!accessToken) {
+      throw new Error("Failed to get access token");
+    }
+
+    return {
+      accessToken,
+    };
   }
   async signUp(command: SignUpCommand): Promise<void> {
     const response = await fetch(
@@ -67,11 +80,17 @@ class FetchApiClient implements ApiClient {
     const datetime = criteria === "today" ? new Date().toISOString() : "";
     const query = datetime ? `?datetime=${datetime}` : "";
 
+    const accessToken = getCookieValue("Authorization");
+    if (!accessToken) {
+      throw new Error("Failed to get access token");
+    }
+
     const response = await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/items${query}`,
+      `${import.meta.env.VITE_SERVER_URL}/review-items${query}`,
       {
         headers: {
           "Content-Type": "application/json",
+          Authorization: decodeURI(accessToken),
         },
       },
     );
@@ -83,16 +102,19 @@ class FetchApiClient implements ApiClient {
   async addItem(item: AddItemCommand): Promise<void> {
     const { offset } = getDatetime();
 
-    const response = await fetch(`${import.meta.env.VITE_SERVER_URL}/items`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      `${import.meta.env.VITE_SERVER_URL}/review-items`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...item,
+          offset,
+        }),
       },
-      body: JSON.stringify({
-        ...item,
-        offset,
-      }),
-    });
+    );
 
     if (!response.ok) {
       throw new Error(`Failed to add item: ${item.mainText}`);
@@ -103,7 +125,7 @@ class FetchApiClient implements ApiClient {
     const { offset } = getDatetime();
 
     const response = await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/items/${itemId}/memorization`,
+      `${import.meta.env.VITE_SERVER_URL}/review-items/${itemId}/memorization`,
       {
         method: "PATCH",
         headers: {
@@ -125,7 +147,7 @@ class FetchApiClient implements ApiClient {
     const { offset } = getDatetime();
 
     const response = await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/items/${itemId}/memorization`,
+      `${import.meta.env.VITE_SERVER_URL}/review-items/${itemId}/memorization`,
       {
         method: "PATCH",
         headers: {
@@ -145,7 +167,7 @@ class FetchApiClient implements ApiClient {
 
   async deleteItem(itemId: number): Promise<void> {
     const response = await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/items/${itemId}`,
+      `${import.meta.env.VITE_SERVER_URL}/review-items/${itemId}`,
       {
         method: "DELETE",
       },
