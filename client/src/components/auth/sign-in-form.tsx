@@ -37,7 +37,7 @@ interface Props {
 }
 
 export default function SignInForm({ showSignUpForm }: Props) {
-  const [cookies, setCookie, removeCookie] = useCookies(["Authorization"]);
+  const [, setCookie, removeCookie] = useCookies(["Authorization"]);
   const { mutate: signIn } = useMutation({
     mutationFn: async (command: SignInFormValues) => {
       return await apiClient.signIn(command);
