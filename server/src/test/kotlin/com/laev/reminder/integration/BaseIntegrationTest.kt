@@ -37,9 +37,11 @@ abstract class BaseIntegrationTest {
     @Autowired
     lateinit var reviewItemRepository: ReviewItemRepository
 
+    private val testEmail = "test@example.com"
+
     @BeforeEach
     fun setUpMember() {
-        val testMember = createOrGetMember("test@example.com")
+        val testMember = createOrGetMember(testEmail)
         reviewItemRepository.save(
             ReviewItem(
                 mainText = "setup item",
@@ -51,7 +53,6 @@ abstract class BaseIntegrationTest {
     }
 
     protected fun getAuthHeaders(): HttpHeaders {
-        val testEmail = "test@example.com"
         val testToken = "Bearer ${jwtTokenProvider.generateToken(testEmail)}"
         val headers = HttpHeaders()
         headers.set("Authorization", testToken)
@@ -66,7 +67,6 @@ abstract class BaseIntegrationTest {
     }
 
     protected fun withAuth(requestBuilder: MockHttpServletRequestBuilder): MockHttpServletRequestBuilder {
-        val testEmail = "test@example.com"
         val testToken = "Bearer ${jwtTokenProvider.generateToken(testEmail)}"
 
         return requestBuilder.header("Authorization", testToken)
