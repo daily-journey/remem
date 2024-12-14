@@ -6,13 +6,18 @@ import com.laev.reminder.security.JwtTokenProvider
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.web.client.TestRestTemplate
+import org.springframework.http.HttpHeaders
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 abstract class BaseIntegrationTest {
+
+    @Autowired
+    lateinit var restTemplate: TestRestTemplate
 
     @Autowired
     protected lateinit var mockMvc: MockMvc
@@ -25,6 +30,21 @@ abstract class BaseIntegrationTest {
 
     @Autowired
     private lateinit var jwtTokenProvider: JwtTokenProvider
+
+    protected fun getAuthHeaders(): HttpHeaders {
+        val testEmail = "test@example.com"
+        val testToken = "Bearer ${jwtTokenProvider.generateToken(testEmail)}"
+        val headers = HttpHeaders()
+        headers.set("Authorization", testToken)
+        return headers
+    }
+
+    protected fun getInvalidAuthHeaders(): HttpHeaders {
+        val testToken = "Bearer invalid_token"
+        val headers = HttpHeaders()
+        headers.set("Authorization", testToken)
+        return headers
+    }
 
     protected fun withAuth(requestBuilder: MockHttpServletRequestBuilder): MockHttpServletRequestBuilder {
         val testEmail = "test@example.com"
