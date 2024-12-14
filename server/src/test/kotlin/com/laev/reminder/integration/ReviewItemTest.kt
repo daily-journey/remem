@@ -1,13 +1,10 @@
 package com.laev.reminder.integration
 
 import com.laev.reminder.dto.AddItemRequest
-import com.laev.reminder.entity.ReviewItem
 import com.laev.reminder.repository.MemorizationLogRepository
 import com.laev.reminder.repository.ReviewDatetimeRepository
-import com.laev.reminder.repository.ReviewItemRepository
 import com.laev.reminder.utils.ObjectMapperUtil
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -20,24 +17,10 @@ import java.time.ZoneOffset
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 class ReviewItemTest(
-    @Autowired private val reviewItemRepository: ReviewItemRepository,
     @Autowired private val memorizationLogRepository: MemorizationLogRepository,
     @Autowired private val reviewDatetimeRepository: ReviewDatetimeRepository,
 ) : BaseIntegrationTest() {
     private val objectMapper = ObjectMapperUtil.createObjectMapper()
-
-    @BeforeEach
-    fun setUp() {
-        val testMember = createOrGetMember("test@example.com")
-        reviewItemRepository.save(
-            ReviewItem(
-                mainText = "setup item",
-                subText = "",
-                reviewDates = "",
-                member = testMember,
-            )
-        )
-    }
 
     @AfterEach
     fun tearDown() {

@@ -5,7 +5,6 @@ import com.laev.reminder.dto.SignUpRequest
 import com.laev.reminder.utils.ObjectMapperUtil
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -16,17 +15,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 class AuthTest: BaseIntegrationTest() {
-    private val objectMapper = ObjectMapperUtil.createObjectMapper()
 
-    @BeforeEach
-    fun setUp() {
-        memberRepository.deleteAll()
-    }
+    private val objectMapper = ObjectMapperUtil.createObjectMapper()
 
     @Test
     fun `Sign up should create a new member when the input is valid`() {
         val request = SignUpRequest(
-            email = "test@example.com",
+            email = "new@example.com",
             password = "123456789_123456789_123456789_abcdef",
             name = "tester",
         )

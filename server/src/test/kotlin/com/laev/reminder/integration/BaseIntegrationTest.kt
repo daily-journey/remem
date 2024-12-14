@@ -1,8 +1,11 @@
 package com.laev.reminder.integration
 
 import com.laev.reminder.entity.Member
+import com.laev.reminder.entity.ReviewItem
 import com.laev.reminder.repository.MemberRepository
+import com.laev.reminder.repository.ReviewItemRepository
 import com.laev.reminder.security.JwtTokenProvider
+import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
@@ -26,10 +29,26 @@ abstract class BaseIntegrationTest {
     protected lateinit var passwordEncoder: BCryptPasswordEncoder
 
     @Autowired
+    private lateinit var jwtTokenProvider: JwtTokenProvider
+
+    @Autowired
     protected lateinit var memberRepository: MemberRepository
 
     @Autowired
-    private lateinit var jwtTokenProvider: JwtTokenProvider
+    lateinit var reviewItemRepository: ReviewItemRepository
+
+    @BeforeEach
+    fun setUpMember() {
+        val testMember = createOrGetMember("test@example.com")
+        reviewItemRepository.save(
+            ReviewItem(
+                mainText = "setup item",
+                subText = "",
+                reviewDates = "",
+                member = testMember,
+            )
+        )
+    }
 
     protected fun getAuthHeaders(): HttpHeaders {
         val testEmail = "test@example.com"

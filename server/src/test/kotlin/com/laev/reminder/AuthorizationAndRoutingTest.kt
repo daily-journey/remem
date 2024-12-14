@@ -1,12 +1,8 @@
 package com.laev.reminder
 
-import com.laev.reminder.entity.ReviewItem
 import com.laev.reminder.integration.BaseIntegrationTest
-import com.laev.reminder.repository.ReviewItemRepository
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpEntity
@@ -15,22 +11,7 @@ import org.springframework.http.HttpStatus
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-class AuthorizationAndRoutingTest(
-    @Autowired private val reviewItemRepository: ReviewItemRepository,
-) : BaseIntegrationTest() {
-
-    @BeforeEach
-    fun setUp() {
-        val testMember = createOrGetMember("test@example.com")
-        reviewItemRepository.save(
-            ReviewItem(
-                mainText = "setup item",
-                subText = "",
-                reviewDates = "",
-                member = testMember,
-            )
-        )
-    }
+class AuthorizationAndRoutingTest : BaseIntegrationTest() {
 
     @Test
     fun `should return 401 when requesting an invalid URL with invalid token`() {
