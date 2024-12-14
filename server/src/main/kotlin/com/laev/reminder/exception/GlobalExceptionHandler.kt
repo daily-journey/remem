@@ -36,7 +36,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(ItemAlreadyDeletedException::class)
     fun handleItemAlreadyDeletedException(e: ItemAlreadyDeletedException): ResponseEntity<String> {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.message)
+        return ResponseEntity.status(HttpStatus.GONE).body(e.message)
     }
 
     // Utility function for creating consistent error responses

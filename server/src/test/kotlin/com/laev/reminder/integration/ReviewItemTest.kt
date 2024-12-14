@@ -123,7 +123,7 @@ class ReviewItemTest(
                 MockMvcRequestBuilders.delete("/review-items/${item.id}")
                     .accept(MediaType.APPLICATION_JSON)
             )
-        ).andExpect(MockMvcResultMatchers.status().isBadRequest)
+        ).andExpect(MockMvcResultMatchers.status().isGone)
             .andExpect(MockMvcResultMatchers.content().string("Item is already deleted."))
     }
 }
