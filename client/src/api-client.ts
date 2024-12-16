@@ -80,17 +80,11 @@ class FetchApiClient implements ApiClient {
     const datetime = criteria === "today" ? new Date().toISOString() : "";
     const query = datetime ? `?datetime=${datetime}` : "";
 
-    const accessToken = getCookieValue("Authorization");
-    if (!accessToken) {
-      throw new Error("Failed to get access token");
-    }
-
-    const response = await fetch(
+    const response = await customFetch(
       `${import.meta.env.VITE_SERVER_URL}/review-items${query}`,
       {
         headers: {
           "Content-Type": "application/json",
-          Authorization: decodeURI(accessToken),
         },
       },
     );
@@ -102,7 +96,7 @@ class FetchApiClient implements ApiClient {
   async addItem(item: AddItemCommand): Promise<void> {
     const { offset } = getDatetime();
 
-    const response = await fetch(
+    const response = await customFetch(
       `${import.meta.env.VITE_SERVER_URL}/review-items`,
       {
         method: "POST",
@@ -124,7 +118,7 @@ class FetchApiClient implements ApiClient {
   async markAsMemorized(itemId: number): Promise<void> {
     const { offset } = getDatetime();
 
-    const response = await fetch(
+    const response = await customFetch(
       `${import.meta.env.VITE_SERVER_URL}/review-items/${itemId}/memorization`,
       {
         method: "PATCH",
@@ -146,7 +140,7 @@ class FetchApiClient implements ApiClient {
   async remindLater(itemId: number): Promise<void> {
     const { offset } = getDatetime();
 
-    const response = await fetch(
+    const response = await customFetch(
       `${import.meta.env.VITE_SERVER_URL}/review-items/${itemId}/memorization`,
       {
         method: "PATCH",
@@ -166,7 +160,7 @@ class FetchApiClient implements ApiClient {
   }
 
   async deleteItem(itemId: number): Promise<void> {
-    const response = await fetch(
+    const response = await customFetch(
       `${import.meta.env.VITE_SERVER_URL}/review-items/${itemId}`,
       {
         method: "DELETE",
@@ -180,3 +174,18 @@ class FetchApiClient implements ApiClient {
 }
 
 export const apiClient = new FetchApiClient();
+
+const customFetch = async (input: RequestInfo, init?: RequestInit) => {
+  const accessToken = getCookieValue("Authorization");
+  if (!accessToken) {
+    throw new Error("Failed to get access token");
+  }
+
+  return fetch(input, {
+    ...init,
+    headers: {
+      ...init?.headers,
+      Authorization: decodeURI(accessToken),
+    },
+  });
+};
