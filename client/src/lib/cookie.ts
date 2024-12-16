@@ -1,8 +1,12 @@
 export function getCookieValue(key: string) {
-  return (
-    document.cookie
-      .split("; ")
-      .find((row) => row.startsWith(`${key}=`))
-      ?.split("=")[1] ?? null
-  );
+  const value = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(`${key}=`))
+    ?.split("=")[1];
+
+  if (!value) {
+    return null;
+  }
+
+  return decodeURI(value);
 }
