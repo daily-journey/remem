@@ -24,6 +24,7 @@ class ReviewItemController(
     @GetMapping
     @Operation(summary = "Get items", description = "Fetch all items or items for a specific date.")
     fun getItems(
+        @RequestHeader("Authorization") authorizationHeader: String,
         @RequestParam(required = false)
         @Parameter(description = "ISO datetime", example = "2024-11-18T05:00:00Z")
         datetime: OffsetDateTime?
@@ -31,7 +32,8 @@ class ReviewItemController(
         val responseHeaders = HttpHeaders()
         responseHeaders.set("Content-Type", "application/json")
 
-        val items = reviewItemService.getReviewItems(datetime)
+        val member = authService.getMemberFromToken(authorizationHeader)
+        val items = reviewItemService.getReviewItems(datetime, member)
 
         return ResponseEntity.ok()
             .headers(responseHeaders)
