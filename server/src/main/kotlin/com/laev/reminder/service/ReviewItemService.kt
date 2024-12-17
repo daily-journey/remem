@@ -26,9 +26,9 @@ class ReviewItemService(
     private val reviewDatetimeRepository: ReviewDatetimeRepository,
     private val memorizationLogRepository: MemorizationLogRepository,
 ) {
-    fun getReviewItems(datetime: OffsetDateTime?): List<ReviewItem> {
+    fun getReviewItems(datetime: OffsetDateTime?, member: Member): List<ReviewItem> {
         if (datetime == null) {
-            return reviewItemRepository.findAll()
+            return reviewItemRepository.findAllByMemberId(member.id!!)
         }
 
         val reviewDatetimes = reviewDatetimeRepository.findByDatetimeRange(datetime)
