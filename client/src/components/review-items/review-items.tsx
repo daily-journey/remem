@@ -2,8 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 import { apiClient } from "@/api-client";
+import type { ReviewItem } from "@/contract/server";
 import { parsingSubtext } from "@/lib/text";
-import type { Item } from "@/model/server";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ import {
 import { toast } from "sonner";
 
 interface Props {
-  items?: Item[];
+  items?: ReviewItem[];
   isLoading: boolean;
 }
 
@@ -70,17 +70,6 @@ export default function ReviewItems({ items, isLoading }: Props) {
 
     return aNextReviewDate.getTime() - bNextReviewDate.getTime();
   });
-
-  const randomColor = (): { backgroundColor: string; color: string } => {
-    const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-    const textColor =
-      parseInt(randomColor, 16) > 0xffffff / 2 ? "black" : "white";
-
-    return {
-      backgroundColor: `#${randomColor}`,
-      color: textColor,
-    };
-  };
 
   const [side, setSide] = useState<"bottom" | "right">("right");
   const [innerWidth, setInnerWidth] = useState(window.innerWidth);
@@ -145,8 +134,7 @@ export default function ReviewItems({ items, isLoading }: Props) {
                         {parsingSubtext(item.subText)}
                       </p>
                       <p className="leading-7 [&:not(:first-child)]:mt-6">
-                        Next review at{" "}
-                        <Badge style={randomColor()}>{nextReviewDate}</Badge>
+                        Next review at <Badge>{nextReviewDate}</Badge>
                       </p>
                     </div>
                   </header>
