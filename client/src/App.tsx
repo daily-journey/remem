@@ -1,7 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-
-import { apiClient } from "@/api-client";
 
 import AddItem from "@/components/add-item/add-item";
 import ReviewItems from "@/components/review-items/review-items";
@@ -9,6 +6,7 @@ import ReviewItems from "@/components/review-items/review-items";
 import SignInForm from "@/components/auth/sign-in-form";
 import SignUpForm from "@/components/auth/sign-up-form";
 import { ModeToggle } from "@/components/mode-toogle";
+import TodayItems from "@/components/today-items/today-items";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useCookies } from "react-cookie";
@@ -24,11 +22,6 @@ function App() {
   const [phase, setPhase] = useState<UserPhase>(UserPhase.LogIn);
 
   const [tab, setTab] = useState<"today" | "all">("today");
-  const { data: items, isLoading: areItemsLoading } = useQuery({
-    queryKey: ["review-items", tab],
-    queryFn: async () => await apiClient.getItems(tab),
-    enabled: !!cookies.Authorization,
-  });
 
   useEffect(() => {
     if (cookies.Authorization) {
@@ -71,11 +64,11 @@ function App() {
               </TabsList>
 
               <TabsContent value="today">
-                <ReviewItems isLoading={areItemsLoading} items={items} />
+                <TodayItems />
               </TabsContent>
 
               <TabsContent value="all">
-                <ReviewItems isLoading={areItemsLoading} items={items} />
+                <ReviewItems />
               </TabsContent>
             </Tabs>
           </div>

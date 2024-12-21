@@ -1,8 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 import { apiClient } from "@/api-client";
-import type { ReviewItem } from "@/contract/server";
 import { parsingSubtext } from "@/lib/text";
 
 import { Badge } from "@/components/ui/badge";
@@ -15,54 +14,20 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { toast } from "sonner";
+import useInnerWidth from "@/hooks/use-inner-width";
+import { useReviewItemMutation } from "@/hooks/use-review-item-mutation";
+import { useCookies } from "react-cookie";
 
-interface Props {
-  items?: ReviewItem[];
-  isLoading: boolean;
-}
+export default function ReviewItems() {
+  const [cookies] = useCookies(["Authorization"]);
+  const { data: items, isLoading: areItemsLoading } = useQuery({
+    queryKey: ["review-items"],
+    queryFn: () => apiClient.getAllItems(),
+    enabled: !!cookies.Authorization,
+  });
 
-export default function ReviewItems({ items, isLoading }: Props) {
-  const queryClient = useQueryClient();
-  const { mutate: markAsMemorized } = useMutation({
-    mutationFn: async (id: number) => await apiClient.markAsMemorized(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["review-items"],
-      });
-      toast.success("Item marked as memorized.");
-    },
-    onError: (error) => {
-      console.error(error);
-      toast.error("Failed to mark item as memorized.");
-    },
-  });
-  const { mutate: remindMeAgainLater } = useMutation({
-    mutationFn: async (id: number) => await apiClient.remindLater(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["review-items"],
-      });
-      toast.success("Item will be reminded later.");
-    },
-    onError: (error) => {
-      console.error(error);
-      toast.error("Failed to remind item later.");
-    },
-  });
-  const { mutate: deleteItem } = useMutation({
-    mutationFn: async (id: number) => await apiClient.deleteItem(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["review-items"],
-      });
-      toast.success("Item deleted.");
-    },
-    onError: (error) => {
-      console.error(error);
-      toast.error("Failed to delete item.");
-    },
-  });
+  const { remindTomorrow, markAsMemorized, deleteItem } =
+    useReviewItemMutation();
 
   const sortedItems = items?.toSorted((a, b) => {
     const aNextReviewDate = new Date(a.reviewDates[0]);
@@ -71,20 +36,8 @@ export default function ReviewItems({ items, isLoading }: Props) {
     return aNextReviewDate.getTime() - bNextReviewDate.getTime();
   });
 
+  const { innerWidth } = useInnerWidth();
   const [side, setSide] = useState<"bottom" | "right">("right");
-  const [innerWidth, setInnerWidth] = useState(window.innerWidth);
-
-  useEffect(() => {
-    window.addEventListener("resize", () => {
-      setInnerWidth(window.innerWidth);
-    });
-
-    return () => {
-      window.removeEventListener("resize", () => {
-        setInnerWidth(window.innerWidth);
-      });
-    };
-  }, []);
 
   useEffect(() => {
     if (innerWidth < 768) {
@@ -97,7 +50,7 @@ export default function ReviewItems({ items, isLoading }: Props) {
   return (
     <section>
       <ul className="flex flex-wrap justify-between gap-2 ">
-        {isLoading && <p>Loading...</p>}
+        {areItemsLoading && <p>Loading...</p>}
 
         {sortedItems?.length === 0 && <p>No items to review.</p>}
 
@@ -157,7 +110,7 @@ export default function ReviewItems({ items, isLoading }: Props) {
                         Memorized
                       </Button>
                       <Button
-                        onClick={() => remindMeAgainLater(item.id)}
+                        onClick={() => remindTomorrow(item.id)}
                         variant="secondary"
                       >
                         Remind me tomorrow
