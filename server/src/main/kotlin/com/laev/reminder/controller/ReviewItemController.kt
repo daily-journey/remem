@@ -1,9 +1,6 @@
 package com.laev.reminder.controller
 
-import com.laev.reminder.dto.AddItemRequest
-import com.laev.reminder.dto.GetItemsResponse
-import com.laev.reminder.dto.GetReviewItemsTodayResponse
-import com.laev.reminder.dto.UpdateMemorizationRequest
+import com.laev.reminder.dto.*
 import com.laev.reminder.service.AuthService
 import com.laev.reminder.service.ReviewItemService
 import io.swagger.v3.oas.annotations.Operation
@@ -15,7 +12,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.OffsetDateTime
-import java.time.ZoneOffset
 
 @RestController
 @RequestMapping("/review-items")
@@ -75,6 +71,25 @@ class ReviewItemController(
                     status = item.status,
                 )
             }
+        )
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "Get item details")
+    fun getItemDetails(
+        @PathVariable @NotNull(message = "Item id cannot be null") id: Long,
+        @RequestHeader("Authorization") authorizationHeader: String,
+    ): ResponseEntity<GetItemDetailsResponse> {
+        val member = authService.getMemberFromToken(authorizationHeader)
+        val reviewItemDetail = reviewItemService.getReviewItemDetail(member, id)
+
+        return ResponseEntity.ok().body(
+            GetItemDetailsResponse(
+                upcomingReviewDates = reviewItemDetail.upcomingReviewDates,
+                remindLaterDates = reviewItemDetail.remindLaterDates,
+                memorizedDates = reviewItemDetail.memorizedDates,
+                skippedDates = reviewItemDetail.skippedDates,
+            )
         )
     }
 

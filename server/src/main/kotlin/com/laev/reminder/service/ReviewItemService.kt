@@ -1,6 +1,7 @@
 package com.laev.reminder.service
 
 import com.laev.reminder.dto.AddItemRequest
+import com.laev.reminder.dto.GetItemDetailsResponse
 import com.laev.reminder.dto.GetReviewItemsTodayResponse
 import com.laev.reminder.entity.ReviewItem
 import com.laev.reminder.entity.Member
@@ -13,6 +14,7 @@ import com.laev.reminder.exception.ItemNotFoundException
 import com.laev.reminder.repository.ReviewItemRepository
 import com.laev.reminder.repository.MemorizationLogRepository
 import com.laev.reminder.repository.ReviewDatetimeRepository
+import com.laev.reminder.service.dto.ReviewItemDetails
 import com.laev.reminder.service.dto.ReviewItemMemorizationCount
 import com.laev.reminder.utils.CycleCalculator
 import org.springframework.dao.DataIntegrityViolationException
@@ -43,8 +45,8 @@ class ReviewItemService(
     }
 
     fun getReviewItemsOfToday(member: Member): List<GetReviewItemsTodayResponse> {
-        val createDatetime = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
-        val items = reviewItemRepository.findReviewItemAndMemorizationLogByReviewDatesAndMemberId(createDatetime, member.id!!)
+        val nowDatetime = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
+        val items = reviewItemRepository.findReviewItemAndMemorizationLogByReviewDatesAndMemberId(nowDatetime, member.id!!)
 
         return items.map {
             val status = when (it.isMemorized) {
@@ -58,6 +60,24 @@ class ReviewItemService(
                 status = status,
             )
         }
+    }
+
+    fun getReviewItemDetail(member: Member, itemId: Long): ReviewItemDetails {
+        reviewItemRepository.findByIdAndMemberId(itemId, member.id!!)
+            ?: throw ItemNotFoundException(itemId)
+
+        val nowDatetime = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
+        val upcomingReviewDates = reviewItemRepository.findUpcomingReviewDatetimeByMemberIdAndReviewItemId(itemId, nowDatetime)
+        val remindLaterDates = reviewItemRepository.findRemindLaterReviewDatetimeByMemberIdAndReviewItemId(itemId)
+        val memorizedDates = reviewItemRepository.findMemorizedReviewDatetimeByMemberIdAndReviewItemId(itemId)
+        val skippedDates = reviewItemRepository.findSkippedReviewDatetimeByMemberIdAndReviewItemId(itemId, nowDatetime)
+
+        return ReviewItemDetails(
+            upcomingReviewDates = upcomingReviewDates,
+            remindLaterDates = remindLaterDates,
+            memorizedDates = memorizedDates,
+            skippedDates = skippedDates,
+        )
     }
 
     @Transactional
