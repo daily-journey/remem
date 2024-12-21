@@ -39,7 +39,7 @@ interface Props {
 }
 
 export default function SignUpForm({ onSignUpSuccess }: Props) {
-  const { mutate: signUp } = useMutation({
+  const { mutate: signUp, status: signUpStatus } = useMutation({
     mutationFn: async (command: SignUpFormValues) =>
       await apiClient.signUp(command),
     onSuccess: () => {
@@ -122,6 +122,13 @@ export default function SignUpForm({ onSignUpSuccess }: Props) {
           />
 
           <Button type="submit">Submit</Button>
+
+          {signUpStatus === "pending" && <p>Loading...</p>}
+          {signUpStatus === "error" && (
+            <p className="mt-4 text-red-600">
+              Signup Failed. Please try again.
+            </p>
+          )}
         </form>
       </Form>
     </>

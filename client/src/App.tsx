@@ -30,10 +30,10 @@ function App() {
   }, [cookies.Authorization]);
 
   return (
-    <>
-      {phase === UserPhase.LoggedIn && (
-        <main className="flex flex-col items-center w-full">
-          <div className="w-full max-w-[710px]">
+    <main className="flex flex-col items-center w-full">
+      <div className="w-full max-w-[710px]">
+        {phase === UserPhase.LoggedIn && (
+          <>
             <div className="flex items-start justify-between h-12 mb-2">
               <h1 className="text-4xl font-extrabold tracking-tight scroll-m-20 lg:text-5xl page-title">
                 Review Notes
@@ -71,18 +71,18 @@ function App() {
                 <ReviewItems />
               </TabsContent>
             </Tabs>
-          </div>
-        </main>
-      )}
+          </>
+        )}
 
-      {phase === UserPhase.LogIn && (
-        <SignInForm showSignUpForm={() => setPhase(UserPhase.SignUp)} />
-      )}
+        {phase === UserPhase.LogIn && (
+          <SignInForm showSignUpForm={() => setPhase(UserPhase.SignUp)} />
+        )}
 
-      {phase === UserPhase.SignUp && (
-        <SignUpForm onSignUpSuccess={() => setPhase(UserPhase.LogIn)} />
-      )}
-    </>
+        {phase === UserPhase.SignUp && (
+          <SignUpForm onSignUpSuccess={() => setPhase(UserPhase.LogIn)} />
+        )}
+      </div>
+    </main>
   );
 }
 
