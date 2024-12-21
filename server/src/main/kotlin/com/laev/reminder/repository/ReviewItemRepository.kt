@@ -9,10 +9,9 @@ import java.time.OffsetDateTime
 
 @Repository
 interface ReviewItemRepository: JpaRepository<ReviewItem, Long> {
+    fun findByMemberIdAndIsDeletedFalse(memberId: Long): List<ReviewItem>
 
-    fun findAllByMemberId(memberId: Long): List<ReviewItem>
-
-    fun findByIdAndMemberId(itemId: Long, memberId: Long): ReviewItem?
+    fun findByIdAndMemberIdAndIsDeletedFalse(itemId: Long, memberId: Long): ReviewItem?
 
     @Query("""
         SELECT new com.laev.reminder.repository.dto.ReviewItemsToday(

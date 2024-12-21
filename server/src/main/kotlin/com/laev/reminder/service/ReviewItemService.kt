@@ -31,7 +31,7 @@ class ReviewItemService(
 ) {
     fun getReviewItems(datetime: OffsetDateTime?, member: Member): List<ReviewItem> {
         if (datetime == null) {
-            return reviewItemRepository.findAllByMemberId(member.id!!)
+            return reviewItemRepository.findByMemberIdAndIsDeletedFalse(member.id!!)
         }
 
         val reviewDatetimes = reviewDatetimeRepository.findByDatetimeRange(datetime)
@@ -62,7 +62,7 @@ class ReviewItemService(
     }
 
     fun getReviewItemDetail(member: Member, itemId: Long): ReviewItemDetails {
-        val item = reviewItemRepository.findByIdAndMemberId(itemId, member.id!!)
+        val item = reviewItemRepository.findByIdAndMemberIdAndIsDeletedFalse(itemId, member.id!!)
             ?: throw ItemNotFoundException(itemId)
 
         val nowDatetime = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
