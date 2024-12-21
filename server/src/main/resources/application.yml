@@ -16,7 +16,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        use_sql_comments: true
 
 security:
   jwt:
@@ -25,7 +24,7 @@ security:
 logging:
   level:
     org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.hibernate.orm.jdbc.bind: TRACE
     org.springframework.security: DEBUG
 
 springdoc:
