@@ -76,7 +76,7 @@ class FetchApiClient implements ApiClient {
     }
   }
 
-  async getTodayItems(): Promise<TodayItem[]> {
+  async getTodayReviewItems(): Promise<TodayItem[]> {
     const response = await customFetch(`${BASE_URL}/review-items/today`);
     const data = await response.json();
 

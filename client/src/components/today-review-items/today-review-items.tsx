@@ -1,14 +1,16 @@
-import { apiClient } from "@/api-client";
-import ItemSheet from "@/components/today-items/item-sheet";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { useCookies } from "react-cookie";
 
-export default function TodayItems() {
+import { apiClient } from "@/api-client";
+import ItemSheet from "@/components/today-review-items/review-item-sheet";
+
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+
+export default function TodayReviewItems() {
   const [cookies] = useCookies(["Authorization"]);
   const { data: items, isLoading: areItemsLoading } = useQuery({
     queryKey: ["today-items"],
-    queryFn: () => apiClient.getTodayItems(),
+    queryFn: () => apiClient.getTodayReviewItems(),
     enabled: !!cookies.Authorization,
   });
 
