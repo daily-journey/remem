@@ -114,8 +114,11 @@ class ReviewItemController(
     fun updateMemorization(
         @RequestBody @Valid request: UpdateMemorizationRequest,
         @PathVariable @NotNull(message = "Item id cannot be null") id: Long,
+        @RequestHeader("Authorization") authorizationHeader: String,
     ): ResponseEntity<Void> {
-        reviewItemService.updateMemorization(id, request.isMemorized!!, request.offset)
+        val member = authService.getMemberFromToken(authorizationHeader)
+        reviewItemService.updateMemorization(member, id, request.isMemorized!!, request.offset)
+
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 
