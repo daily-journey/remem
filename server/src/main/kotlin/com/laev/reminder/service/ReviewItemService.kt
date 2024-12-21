@@ -122,10 +122,10 @@ class ReviewItemService(
     }
 
     @Transactional
-    fun updateMemorization(itemId: Long, isMemorized: Boolean, offset: ZoneOffset) {
-        val item = reviewItemRepository.findById(itemId).orElseThrow {
-            ItemNotFoundException(itemId)
-        }
+    fun updateMemorization(member: Member, itemId: Long, isMemorized: Boolean, offset: ZoneOffset) {
+        val item = reviewItemRepository.findByIdAndMemberIdAndIsDeletedFalse(itemId, member.id!!)
+            ?: throw ItemNotFoundException(itemId)
+
         createMemorizationLog(isMemorized, item)
 
         // if not memorized, add a new review date for tomorrow
