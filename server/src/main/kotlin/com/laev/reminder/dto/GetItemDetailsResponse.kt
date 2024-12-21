@@ -8,7 +8,7 @@ class GetItemDetailsResponse(
     val upcomingReviewDates: List<OffsetDateTime>,
 
     @Schema(description = "Dates requested by the user to be reminded later")
-    val remindLaterDates: List<OffsetDateTime>,
+    val remindTomorrowDates: List<OffsetDateTime>,
 
     @Schema(description = "Dates that the user memorized")
     val memorizedDates: List<OffsetDateTime>,
