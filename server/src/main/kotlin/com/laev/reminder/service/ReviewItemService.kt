@@ -1,10 +1,12 @@
 package com.laev.reminder.service
 
 import com.laev.reminder.dto.AddItemRequest
+import com.laev.reminder.dto.GetReviewItemsTodayResponse
 import com.laev.reminder.entity.ReviewItem
 import com.laev.reminder.entity.Member
 import com.laev.reminder.entity.MemorizationLog
 import com.laev.reminder.entity.ReviewDatetime
+import com.laev.reminder.enum.ReviewItemStatus
 import com.laev.reminder.exception.ItemAlreadyDeletedException
 import com.laev.reminder.exception.ItemCreationException
 import com.laev.reminder.exception.ItemNotFoundException
@@ -38,6 +40,24 @@ class ReviewItemService(
 
     fun getReviewItemMemorizationCount(itemId: Long): ReviewItemMemorizationCount {
         return memorizationLogRepository.findMemorizationCountsByItemId(itemId)
+    }
+
+    fun getReviewItemsOfToday(member: Member): List<GetReviewItemsTodayResponse> {
+        val createDatetime = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
+        val items = reviewItemRepository.findReviewItemAndMemorizationLogByReviewDatesAndMemberId(createDatetime, member.id!!)
+
+        return items.map {
+            val status = when (it.isMemorized) {
+                true -> ReviewItemStatus.MEMORIZED
+                false -> ReviewItemStatus.REMIND_LATER
+                null -> ReviewItemStatus.NO_ACTION
+            }
+            GetReviewItemsTodayResponse(
+                id = it.id,
+                mainText = it.mainText,
+                status = status,
+            )
+        }
     }
 
     @Transactional

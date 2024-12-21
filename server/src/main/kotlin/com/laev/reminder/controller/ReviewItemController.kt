@@ -2,6 +2,7 @@ package com.laev.reminder.controller
 
 import com.laev.reminder.dto.AddItemRequest
 import com.laev.reminder.dto.GetItemsResponse
+import com.laev.reminder.dto.GetReviewItemsTodayResponse
 import com.laev.reminder.dto.UpdateMemorizationRequest
 import com.laev.reminder.service.AuthService
 import com.laev.reminder.service.ReviewItemService
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 @RestController
 @RequestMapping("/review-items")
@@ -24,7 +26,8 @@ class ReviewItemController(
     @GetMapping
     @Operation(summary = "Get items", description = "Fetch all items or items for a specific date.")
     fun getItems(
-        @RequestHeader("Authorization") authorizationHeader: String,
+        @RequestHeader("Authorization")
+        authorizationHeader: String,
         @RequestParam(required = false)
         @Parameter(description = "ISO datetime", example = "2024-11-18T05:00:00Z")
         datetime: OffsetDateTime?
@@ -54,6 +57,25 @@ class ReviewItemController(
                     )
                 }
             )
+    }
+
+    @GetMapping("/today")
+    @Operation(summary = "Get today's review items")
+    fun getReviewItemsOfToday(
+        @RequestHeader("Authorization") authorizationHeader: String,
+    ): ResponseEntity<List<GetReviewItemsTodayResponse>>{
+        val member = authService.getMemberFromToken(authorizationHeader)
+        val items = reviewItemService.getReviewItemsOfToday(member)
+
+        return ResponseEntity.ok().body(
+            items.map { item ->
+                GetReviewItemsTodayResponse(
+                    id = item.id ?: 0,
+                    mainText = item.mainText,
+                    status = item.status,
+                )
+            }
+        )
     }
 
     @PostMapping
