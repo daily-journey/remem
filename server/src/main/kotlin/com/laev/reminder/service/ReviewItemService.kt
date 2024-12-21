@@ -16,6 +16,7 @@ import com.laev.reminder.repository.ReviewDatetimeRepository
 import com.laev.reminder.service.dto.ReviewItemDetails
 import com.laev.reminder.service.dto.ReviewItemMemorizationCount
 import com.laev.reminder.utils.CycleCalculator
+import com.laev.reminder.utils.DateTimeUtils
 import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -29,6 +30,8 @@ class ReviewItemService(
     private val reviewDatetimeRepository: ReviewDatetimeRepository,
     private val memorizationLogRepository: MemorizationLogRepository,
 ) {
+    private val nowDatetime = DateTimeUtils.getCurrentUtcTime()
+
     fun getReviewItems(datetime: OffsetDateTime?, member: Member): List<ReviewItem> {
         if (datetime == null) {
             return reviewItemRepository.findByMemberIdAndIsDeletedFalse(member.id!!)
@@ -44,7 +47,6 @@ class ReviewItemService(
     }
 
     fun getReviewItemsOfToday(member: Member): List<GetReviewItemsTodayResponse> {
-        val nowDatetime = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
         val items = reviewItemRepository.findReviewItemAndMemorizationLogByNowDatetimeAndMemberId(nowDatetime, member.id!!)
 
         return items.map {
@@ -65,7 +67,6 @@ class ReviewItemService(
         val item = reviewItemRepository.findByIdAndMemberIdAndIsDeletedFalse(itemId, member.id!!)
             ?: throw ItemNotFoundException(itemId)
 
-        val nowDatetime = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
         val upcomingReviewDates = reviewItemRepository.findUpcomingReviewDatetimeByMemberIdAndReviewItemId(itemId, nowDatetime)
         val remindTomorrowDates = reviewItemRepository.findRemindTomorrowReviewDatetimeByMemberIdAndReviewItemId(itemId)
         val memorizedDates = reviewItemRepository.findMemorizedReviewDatetimeByMemberIdAndReviewItemId(itemId)
@@ -86,12 +87,11 @@ class ReviewItemService(
     @Transactional
     fun addReviewItem(request: AddItemRequest, member: Member) {
         try {
-            val createDatetime = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS) // save time in UTC
             val cycles = listOf(1, 3, 7, 21)
-            val reviewDates = CycleCalculator.getReviewDates(createDatetime, cycles)
+            val reviewDates = CycleCalculator.getReviewDates(nowDatetime, cycles)
 
             val zoneOffset = request.offset.toZoneOffset()
-            val zonedCreatedDatetime = createDatetime.withOffsetSameInstant(zoneOffset) // Convert to local time with the applied zoneOffset
+            val zonedCreatedDatetime = nowDatetime.withOffsetSameInstant(zoneOffset) // Convert to local time with the applied zoneOffset
 
             val newReviewItem = reviewItemRepository.save(
                 ReviewItem(
@@ -135,12 +135,10 @@ class ReviewItemService(
     }
 
     private fun createMemorizationLog(isMemorized: Boolean, reviewItem: ReviewItem) {
-        val createdDatetime = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
-
         memorizationLogRepository.save(
             MemorizationLog(
                 isMemorized = isMemorized,
-                createdDatetime = createdDatetime,
+                createdDatetime = nowDatetime,
                 reviewItem = reviewItem,
             )
         )
@@ -148,8 +146,7 @@ class ReviewItemService(
 
     private fun createReviewDate(itemId: Long, offset: ZoneOffset, cycle: Int) {
         val zoneOffset = offset.toZoneOffset()
-        val createdDatetime = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
-        val zonedCreatedDatetime = createdDatetime.withOffsetSameInstant(zoneOffset)
+        val zonedCreatedDatetime = nowDatetime.withOffsetSameInstant(zoneOffset)
         val startDatetime = CycleCalculator.getUTCStartDatetime(zonedCreatedDatetime, cycle, zoneOffset)
         val endDatetime = startDatetime.plusHours(24)
         val item = reviewItemRepository.getReferenceById(itemId)
