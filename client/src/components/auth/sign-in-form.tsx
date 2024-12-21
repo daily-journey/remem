@@ -38,7 +38,7 @@ interface Props {
 
 export default function SignInForm({ showSignUpForm }: Props) {
   const [, setCookie, removeCookie] = useCookies(["Authorization"]);
-  const { mutate: signIn } = useMutation({
+  const { mutate: signIn, status: signInStatus } = useMutation({
     mutationFn: async (command: SignInFormValues) => {
       return await apiClient.signIn(command);
     },
@@ -107,6 +107,11 @@ export default function SignInForm({ showSignUpForm }: Props) {
 
           <Button type="submit">Submit</Button>
         </form>
+
+        {signInStatus === "pending" && <p>Loading...</p>}
+        {signInStatus === "error" && (
+          <p className="mt-4 text-red-600">Signin Failed. Please try again.</p>
+        )}
       </Form>
 
       <p className="mt-4">
