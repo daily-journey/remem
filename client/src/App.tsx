@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
+import { useCookies } from "react-cookie";
 
 import AddItem from "@/components/add-item/add-item";
-import ReviewItems from "@/components/review-items/review-items";
-
+import ReviewItems from "@/components/all-review-items/review-items";
 import SignInForm from "@/components/auth/sign-in-form";
 import SignUpForm from "@/components/auth/sign-up-form";
+import TodayReviewItems from "@/components/today-review-items/today-review-items";
+
 import { ModeToggle } from "@/components/mode-toogle";
-import TodayItems from "@/components/today-items/today-items";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useCookies } from "react-cookie";
 
 enum UserPhase {
   SignUp,
@@ -64,7 +64,7 @@ function App() {
               </TabsList>
 
               <TabsContent value="today">
-                <TodayItems />
+                <TodayReviewItems />
               </TabsContent>
 
               <TabsContent value="all">
