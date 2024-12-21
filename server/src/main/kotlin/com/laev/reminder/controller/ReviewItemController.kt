@@ -85,6 +85,10 @@ class ReviewItemController(
 
         return ResponseEntity.ok().body(
             GetItemDetailsResponse(
+                id = reviewItemDetail.id,
+                mainText = reviewItemDetail.mainText,
+                subText = reviewItemDetail.subText,
+                isRecurring = reviewItemDetail.isRecurring,
                 upcomingReviewDates = reviewItemDetail.upcomingReviewDates,
                 remindTomorrowDates = reviewItemDetail.remindTomorrowDates,
                 memorizedDates = reviewItemDetail.memorizedDates,

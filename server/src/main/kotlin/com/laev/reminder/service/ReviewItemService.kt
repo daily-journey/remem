@@ -62,7 +62,7 @@ class ReviewItemService(
     }
 
     fun getReviewItemDetail(member: Member, itemId: Long): ReviewItemDetails {
-        reviewItemRepository.findByIdAndMemberId(itemId, member.id!!)
+        val item = reviewItemRepository.findByIdAndMemberId(itemId, member.id!!)
             ?: throw ItemNotFoundException(itemId)
 
         val nowDatetime = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
@@ -72,6 +72,10 @@ class ReviewItemService(
         val skippedDates = reviewItemRepository.findSkippedReviewDatetimeByMemberIdAndReviewItemId(itemId, nowDatetime)
 
         return ReviewItemDetails(
+            id = itemId,
+            mainText = item.mainText,
+            subText = item.subText,
+            isRecurring = item.isRecurring,
             upcomingReviewDates = upcomingReviewDates,
             remindTomorrowDates = remindTomorrowDates,
             memorizedDates = memorizedDates,
