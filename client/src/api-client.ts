@@ -1,4 +1,4 @@
-import type { Item } from "./model/server";
+import type { ReviewItem, TodayItem } from "./contract/server";
 
 import { getCookieValue } from "@/lib/cookie";
 import { getDatetime } from "@/lib/date";
@@ -20,7 +20,7 @@ interface SignInCommand {
 }
 
 interface ApiClient {
-  getItems(criteria: "today" | "all"): Promise<Item[]>;
+  getAllItems(criteria: "today" | "all"): Promise<ReviewItem[]>;
   addItem(item: AddItemCommand): Promise<void>;
   markAsMemorized(itemId: number): Promise<void>;
   remindLater(itemId: number): Promise<void>;
@@ -30,21 +30,21 @@ interface ApiClient {
   signIn(command: SignInCommand): Promise<{ accessToken: string }>;
 }
 
+const BASE_URL = `${import.meta.env.VITE_SERVER_URL}`;
+
 class FetchApiClient implements ApiClient {
+  // TODO: extract signIn and signUp methods to AuthApiClient
   async signIn(command: SignInCommand): Promise<{
     accessToken: string;
   }> {
-    const response = await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/auth/sign-in`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(command),
+    const response = await fetch(`${BASE_URL}/auth/sign-in`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      credentials: "include",
+      body: JSON.stringify(command),
+    });
 
     if (!response.ok) {
       throw new Error(`Failed to sign in: ${command.email}`);
@@ -60,34 +60,31 @@ class FetchApiClient implements ApiClient {
       accessToken,
     };
   }
+
+  // TODO: extract signIn and signUp methods to AuthApiClient
   async signUp(command: SignUpCommand): Promise<void> {
-    const response = await fetch(
-      `${import.meta.env.VITE_SERVER_URL}/auth/sign-up`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(command),
+    const response = await fetch(`${BASE_URL}/auth/sign-up`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify(command),
+    });
 
     if (!response.ok) {
       throw new Error(`Failed to sign up: ${command.email}`);
     }
   }
-  async getItems(criteria: "today" | "all"): Promise<Item[]> {
-    const datetime = criteria === "today" ? new Date().toISOString() : "";
-    const query = datetime ? `?datetime=${datetime}` : "";
 
-    const response = await customFetch(
-      `${import.meta.env.VITE_SERVER_URL}/review-items${query}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
+  async getTodayItems(): Promise<TodayItem[]> {
+    const response = await customFetch(`${BASE_URL}/review-items/today`);
+    const data = await response.json();
+
+    return data;
+  }
+
+  async getAllItems(): Promise<ReviewItem[]> {
+    const response = await customFetch(`${BASE_URL}/review-items`);
     const data = await response.json();
 
     return data;
@@ -96,19 +93,16 @@ class FetchApiClient implements ApiClient {
   async addItem(item: AddItemCommand): Promise<void> {
     const { offset } = getDatetime();
 
-    const response = await customFetch(
-      `${import.meta.env.VITE_SERVER_URL}/review-items`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...item,
-          offset,
-        }),
+    const response = await customFetch(`${BASE_URL}/review-items`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+      body: JSON.stringify({
+        ...item,
+        offset,
+      }),
+    });
 
     if (!response.ok) {
       throw new Error(`Failed to add item: ${item.mainText}`);
@@ -119,12 +113,9 @@ class FetchApiClient implements ApiClient {
     const { offset } = getDatetime();
 
     const response = await customFetch(
-      `${import.meta.env.VITE_SERVER_URL}/review-items/${itemId}/memorization`,
+      `${BASE_URL}/review-items/${itemId}/memorization`,
       {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
           isMemorized: true,
           offset,
@@ -141,12 +132,9 @@ class FetchApiClient implements ApiClient {
     const { offset } = getDatetime();
 
     const response = await customFetch(
-      `${import.meta.env.VITE_SERVER_URL}/review-items/${itemId}/memorization`,
+      `${BASE_URL}/review-items/${itemId}/memorization`,
       {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
           isMemorized: false,
           offset,
@@ -160,12 +148,9 @@ class FetchApiClient implements ApiClient {
   }
 
   async deleteItem(itemId: number): Promise<void> {
-    const response = await customFetch(
-      `${import.meta.env.VITE_SERVER_URL}/review-items/${itemId}`,
-      {
-        method: "DELETE",
-      },
-    );
+    const response = await customFetch(`${BASE_URL}/review-items/${itemId}`, {
+      method: "DELETE",
+    });
 
     if (!response.ok) {
       throw new Error(`Failed to delete item: ${itemId}`);
@@ -183,9 +168,11 @@ const customFetch = async (input: RequestInfo, init?: RequestInit) => {
 
   return fetch(input, {
     ...init,
+
     headers: {
-      ...init?.headers,
+      "Content-Type": "application/json",
       Authorization: decodeURI(accessToken),
+      ...init?.headers,
     },
   });
 };
