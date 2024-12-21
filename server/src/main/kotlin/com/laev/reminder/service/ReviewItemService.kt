@@ -45,7 +45,7 @@ class ReviewItemService(
 
     fun getReviewItemsOfToday(member: Member): List<GetReviewItemsTodayResponse> {
         val nowDatetime = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
-        val items = reviewItemRepository.findReviewItemAndMemorizationLogByReviewDatesAndMemberId(nowDatetime, member.id!!)
+        val items = reviewItemRepository.findReviewItemAndMemorizationLogByNowDatetimeAndMemberId(nowDatetime, member.id!!)
 
         return items.map {
             val status = when (it.isMemorized) {
