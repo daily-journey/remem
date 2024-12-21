@@ -20,9 +20,9 @@ interface ReviewItemRepository: JpaRepository<ReviewItem, Long> {
         FROM ReviewItem ri
             INNER JOIN ReviewDatetime rd ON rd.reviewItem.id = ri.id AND rd.start <= :datetime AND :datetime < rd.end
             LEFT JOIN MemorizationLog m ON m.reviewItem.id = ri.id
-        WHERE ri.member.id = :memberId
+        WHERE ri.member.id = :memberId AND ri.isDeleted = false
     """)
-    fun findReviewItemAndMemorizationLogByReviewDatesAndMemberId(datetime: OffsetDateTime, memberId: Long): List<ReviewItemsToday>
+    fun findReviewItemAndMemorizationLogByNowDatetimeAndMemberId(datetime: OffsetDateTime, memberId: Long): List<ReviewItemsToday>
 
     @Query("""
         SELECT rd.start
