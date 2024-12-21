@@ -39,7 +39,7 @@ interface ReviewItemRepository: JpaRepository<ReviewItem, Long> {
             INNER JOIN MemorizationLog m ON m.reviewItem.id = ri.id AND m.isMemorized = false
         WHERE ri.id = :itemId
     """)
-    fun findRemindLaterReviewDatetimeByMemberIdAndReviewItemId(itemId: Long): List<OffsetDateTime>
+    fun findRemindTomorrowReviewDatetimeByMemberIdAndReviewItemId(itemId: Long): List<OffsetDateTime>
 
     @Query("""
         SELECT m.createdDatetime

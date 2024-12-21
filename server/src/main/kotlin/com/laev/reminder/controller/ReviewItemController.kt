@@ -86,7 +86,7 @@ class ReviewItemController(
         return ResponseEntity.ok().body(
             GetItemDetailsResponse(
                 upcomingReviewDates = reviewItemDetail.upcomingReviewDates,
-                remindLaterDates = reviewItemDetail.remindLaterDates,
+                remindTomorrowDates = reviewItemDetail.remindTomorrowDates,
                 memorizedDates = reviewItemDetail.memorizedDates,
                 skippedDates = reviewItemDetail.skippedDates,
             )

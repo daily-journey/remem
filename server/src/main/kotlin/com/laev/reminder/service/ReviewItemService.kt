@@ -1,7 +1,6 @@
 package com.laev.reminder.service
 
 import com.laev.reminder.dto.AddItemRequest
-import com.laev.reminder.dto.GetItemDetailsResponse
 import com.laev.reminder.dto.GetReviewItemsTodayResponse
 import com.laev.reminder.entity.ReviewItem
 import com.laev.reminder.entity.Member
@@ -68,13 +67,13 @@ class ReviewItemService(
 
         val nowDatetime = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
         val upcomingReviewDates = reviewItemRepository.findUpcomingReviewDatetimeByMemberIdAndReviewItemId(itemId, nowDatetime)
-        val remindLaterDates = reviewItemRepository.findRemindLaterReviewDatetimeByMemberIdAndReviewItemId(itemId)
+        val remindTomorrowDates = reviewItemRepository.findRemindTomorrowReviewDatetimeByMemberIdAndReviewItemId(itemId)
         val memorizedDates = reviewItemRepository.findMemorizedReviewDatetimeByMemberIdAndReviewItemId(itemId)
         val skippedDates = reviewItemRepository.findSkippedReviewDatetimeByMemberIdAndReviewItemId(itemId, nowDatetime)
 
         return ReviewItemDetails(
             upcomingReviewDates = upcomingReviewDates,
-            remindLaterDates = remindLaterDates,
+            remindTomorrowDates = remindTomorrowDates,
             memorizedDates = memorizedDates,
             skippedDates = skippedDates,
         )
