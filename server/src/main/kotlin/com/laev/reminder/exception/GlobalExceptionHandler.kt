@@ -11,27 +11,32 @@ import org.springframework.web.server.ResponseStatusException
 class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException::class)
-    fun handleInvalidFormatException(ex: HttpMessageNotReadableException): ResponseEntity<Map<String, String>> {
-        val errorMessage = ex.cause?.message ?: "Invalid request body"
+    fun handleInvalidFormatException(e: HttpMessageNotReadableException): ResponseEntity<Map<String, String>> {
+        val errorMessage = e.cause?.message ?: "Invalid request body"
         return createErrorResponse(errorMessage, HttpStatus.BAD_REQUEST)
     }
 
     @ExceptionHandler(EmailAlreadyExistsException::class)
-    fun handleEmailAlreadyExistsException(ex: EmailAlreadyExistsException): ResponseEntity<Map<String, String>> {
-        val errorMessage = "The email '${ex.email}' is already registered."
+    fun handleEmailAlreadyExistsException(e: EmailAlreadyExistsException): ResponseEntity<Map<String, String>> {
+        val errorMessage = "The email '${e.email}' is already registered."
         return createErrorResponse(errorMessage, HttpStatus.CONFLICT)
     }
 
     @ExceptionHandler(ResponseStatusException::class)
-    fun handleResponseStatusException(ex: ResponseStatusException): ResponseEntity<Map<String, String>> {
-        val errorMessage = ex.reason ?: "Unexpected error occurred"
-        val status = HttpStatus.valueOf(ex.statusCode.value()) // Convert HttpStatusCode to HttpStatus
+    fun handleResponseStatusException(e: ResponseStatusException): ResponseEntity<Map<String, String>> {
+        val errorMessage = e.reason ?: "Unexpected error occurred"
+        val status = HttpStatus.valueOf(e.statusCode.value()) // Convert HttpStatusCode to HttpStatus
         return createErrorResponse(errorMessage, status)
     }
 
     @ExceptionHandler(ItemNotFoundException::class)
     fun handleItemNotFoundException(e: ItemNotFoundException): ResponseEntity<String> {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.message)
+    }
+
+    @ExceptionHandler(ConflictException::class)
+    fun handleConflictException(e: ConflictException): ResponseEntity<String> {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(e.message)
     }
 
     @ExceptionHandler(ItemAlreadyDeletedException::class)

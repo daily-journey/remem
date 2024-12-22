@@ -7,6 +7,7 @@ import com.laev.reminder.entity.Member
 import com.laev.reminder.entity.MemorizationLog
 import com.laev.reminder.entity.ReviewDatetime
 import com.laev.reminder.enum.ReviewItemStatus
+import com.laev.reminder.exception.ConflictException
 import com.laev.reminder.exception.ItemAlreadyDeletedException
 import com.laev.reminder.exception.ItemCreationException
 import com.laev.reminder.exception.ItemNotFoundException
@@ -168,10 +169,11 @@ class ReviewItemService(
 
     @Transactional
     fun deleteReviewItem(member: Member, itemId: Long) {
-        val item = findItemByMember(member, itemId)
+        val item = reviewItemRepository.findByIdAndMemberId(itemId, member.id!!)
+            ?: throw ItemNotFoundException(itemId)
 
         if (item.isDeleted) {
-            throw ItemAlreadyDeletedException()
+            throw ConflictException("Item is already deleted.")
         }
 
         item.isDeleted = true
@@ -179,7 +181,13 @@ class ReviewItemService(
     }
 
     private fun findItemByMember(member: Member, itemId: Long): ReviewItem {
-        return reviewItemRepository.findByIdAndMemberIdAndIsDeletedFalse(itemId, member.id!!)
+        val item = reviewItemRepository.findByIdAndMemberId(itemId, member.id!!)
             ?: throw ItemNotFoundException(itemId)
+
+        if (item.isDeleted) {
+            throw ItemAlreadyDeletedException()
+        }
+
+        return item
     }
 }

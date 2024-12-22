@@ -9,6 +9,9 @@ import java.time.OffsetDateTime
 
 @Repository
 interface ReviewItemRepository: JpaRepository<ReviewItem, Long> {
+
+    fun findByIdAndMemberId(itemId: Long, memberId: Long): ReviewItem?
+
     fun findByMemberIdAndIsDeletedFalse(memberId: Long): List<ReviewItem>
 
     fun findByIdAndMemberIdAndIsDeletedFalse(itemId: Long, memberId: Long): ReviewItem?
