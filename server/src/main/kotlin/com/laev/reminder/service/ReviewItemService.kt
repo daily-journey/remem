@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
-import java.time.temporal.ChronoUnit
 
 @Service
 class ReviewItemService(
@@ -64,8 +63,7 @@ class ReviewItemService(
     }
 
     fun getReviewItemDetail(member: Member, itemId: Long): ReviewItemDetails {
-        val item = reviewItemRepository.findByIdAndMemberIdAndIsDeletedFalse(itemId, member.id!!)
-            ?: throw ItemNotFoundException(itemId)
+        val item = findItemByMember(member, itemId)
 
         val upcomingReviewDates = reviewItemRepository.findUpcomingReviewDatetimeByMemberIdAndReviewItemId(itemId, nowDatetime)
         val remindTomorrowDates = reviewItemRepository.findRemindTomorrowReviewDatetimeByMemberIdAndReviewItemId(itemId)
@@ -123,8 +121,7 @@ class ReviewItemService(
 
     @Transactional
     fun updateMemorization(member: Member, itemId: Long, isMemorized: Boolean, offset: ZoneOffset) {
-        val item = reviewItemRepository.findByIdAndMemberIdAndIsDeletedFalse(itemId, member.id!!)
-            ?: throw ItemNotFoundException(itemId)
+        val item = findItemByMember(member, itemId)
 
         createMemorizationLog(isMemorized, item)
 
@@ -170,10 +167,8 @@ class ReviewItemService(
     }
 
     @Transactional
-    fun deleteReviewItem(itemId: Long) {
-        val item = reviewItemRepository.findById(itemId).orElseThrow {
-            ItemNotFoundException(itemId)
-        }
+    fun deleteReviewItem(member: Member, itemId: Long) {
+        val item = findItemByMember(member, itemId)
 
         if (item.isDeleted) {
             throw ItemAlreadyDeletedException()
@@ -181,5 +176,10 @@ class ReviewItemService(
 
         item.isDeleted = true
         reviewItemRepository.save(item)
+    }
+
+    private fun findItemByMember(member: Member, itemId: Long): ReviewItem {
+        return reviewItemRepository.findByIdAndMemberIdAndIsDeletedFalse(itemId, member.id!!)
+            ?: throw ItemNotFoundException(itemId)
     }
 }

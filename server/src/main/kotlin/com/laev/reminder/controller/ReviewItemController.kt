@@ -126,8 +126,11 @@ class ReviewItemController(
     @Operation(summary = "Delete an item")
     fun deleteItem(
         @PathVariable @NotNull(message = "Item id cannot be null") id: Long,
+        @RequestHeader("Authorization") authorizationHeader: String,
     ): ResponseEntity<String> {
-        reviewItemService.deleteReviewItem(id)
+        val member = authService.getMemberFromToken(authorizationHeader)
+        reviewItemService.deleteReviewItem(member, id)
+
         return ResponseEntity.ok("Item deleted successfully.")
     }
 }
