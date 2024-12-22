@@ -38,7 +38,7 @@ class ReviewItemController(
             .headers(responseHeaders)
             .body(
                 items.map { item ->
-                    val count = reviewItemService.getReviewItemMemorizationCount(item.id!!)
+                    val count = reviewItemService.getReviewItemMemorizationCount(item.id)
                     GetItemsResponse(
                         id = item.id ?: 0,
                         mainText = item.mainText,
