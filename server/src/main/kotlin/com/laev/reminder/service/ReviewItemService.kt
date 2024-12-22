@@ -32,7 +32,7 @@ class ReviewItemService(
 ) {
     fun getReviewItems(datetime: OffsetDateTime?, member: Member): List<ReviewItem> {
         if (datetime == null) {
-            return reviewItemRepository.findByMemberIdAndIsDeletedFalse(member.id!!)
+            return reviewItemRepository.findByMemberIdAndIsDeletedFalse(member.id)
         }
 
         val reviewDatetimes = reviewDatetimeRepository.findByDatetimeRange(datetime)
@@ -46,7 +46,7 @@ class ReviewItemService(
 
     fun getReviewItemsOfToday(member: Member): List<GetReviewItemsTodayResponse> {
         val nowDatetime = DateTimeUtils.getCurrentUtcTime()
-        val items = reviewItemRepository.findReviewItemAndMemorizationLogByNowDatetimeAndMemberId(nowDatetime, member.id!!)
+        val items = reviewItemRepository.findReviewItemAndMemorizationLogByNowDatetimeAndMemberId(nowDatetime, member.id)
 
         return items.map {
             val status = when (it.isMemorized) {
@@ -172,7 +172,7 @@ class ReviewItemService(
 
     @Transactional
     fun deleteReviewItem(member: Member, itemId: Long) {
-        val item = reviewItemRepository.findByIdAndMemberId(itemId, member.id!!)
+        val item = reviewItemRepository.findByIdAndMemberId(itemId, member.id)
             ?: throw ItemNotFoundException(itemId)
 
         if (item.isDeleted) {
@@ -184,7 +184,7 @@ class ReviewItemService(
     }
 
     private fun findItemByMember(member: Member, itemId: Long): ReviewItem {
-        val item = reviewItemRepository.findByIdAndMemberId(itemId, member.id!!)
+        val item = reviewItemRepository.findByIdAndMemberId(itemId, member.id)
             ?: throw ItemNotFoundException(itemId)
 
         if (item.isDeleted) {

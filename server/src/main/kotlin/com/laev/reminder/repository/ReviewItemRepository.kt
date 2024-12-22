@@ -14,8 +14,6 @@ interface ReviewItemRepository: JpaRepository<ReviewItem, Long> {
 
     fun findByMemberIdAndIsDeletedFalse(memberId: Long): List<ReviewItem>
 
-    fun findByIdAndMemberIdAndIsDeletedFalse(itemId: Long, memberId: Long): ReviewItem?
-
     @Query("""
         SELECT new com.laev.reminder.repository.dto.ReviewItemsToday(
             ri.id, ri.mainText, m.isMemorized

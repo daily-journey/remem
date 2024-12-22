@@ -7,7 +7,7 @@ import java.time.OffsetDateTime
 class MemorizationLog(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null,
+    var id: Long = 0,
 
     @Column(nullable = false)
     val isMemorized: Boolean,

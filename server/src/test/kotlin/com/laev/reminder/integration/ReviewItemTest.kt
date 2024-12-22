@@ -78,7 +78,7 @@ class ReviewItemTest(
             )
         ).andExpect(MockMvcResultMatchers.status().isOk)
 
-        val updatedItem = reviewItemRepository.findById(item.id!!).orElseThrow()
+        val updatedItem = reviewItemRepository.findById(item.id).orElseThrow()
         assert(updatedItem.isDeleted) { "Item should be marked as deleted" }
     }
 
