@@ -30,8 +30,6 @@ class ReviewItemService(
     private val reviewDatetimeRepository: ReviewDatetimeRepository,
     private val memorizationLogRepository: MemorizationLogRepository,
 ) {
-    private val nowDatetime = DateTimeUtils.getCurrentUtcTime()
-
     fun getReviewItems(datetime: OffsetDateTime?, member: Member): List<ReviewItem> {
         if (datetime == null) {
             return reviewItemRepository.findByMemberIdAndIsDeletedFalse(member.id!!)
@@ -47,6 +45,7 @@ class ReviewItemService(
     }
 
     fun getReviewItemsOfToday(member: Member): List<GetReviewItemsTodayResponse> {
+        val nowDatetime = DateTimeUtils.getCurrentUtcTime()
         val items = reviewItemRepository.findReviewItemAndMemorizationLogByNowDatetimeAndMemberId(nowDatetime, member.id!!)
 
         return items.map {
@@ -65,6 +64,7 @@ class ReviewItemService(
 
     fun getReviewItemDetail(member: Member, itemId: Long): ReviewItemDetails {
         val item = findItemByMember(member, itemId)
+        val nowDatetime = DateTimeUtils.getCurrentUtcTime()
 
         val upcomingReviewDates = reviewItemRepository.findUpcomingReviewDatetimeByMemberIdAndReviewItemId(itemId, nowDatetime)
         val remindTomorrowDates = reviewItemRepository.findRemindTomorrowReviewDatetimeByMemberIdAndReviewItemId(itemId)
@@ -87,6 +87,7 @@ class ReviewItemService(
     fun addReviewItem(request: AddItemRequest, member: Member) {
         try {
             val cycles = listOf(1, 3, 7, 21)
+            val nowDatetime = DateTimeUtils.getCurrentUtcTime()
             val reviewDates = CycleCalculator.getReviewDates(nowDatetime, cycles)
 
             val zoneOffset = request.offset.toZoneOffset()
@@ -133,6 +134,7 @@ class ReviewItemService(
     }
 
     private fun createMemorizationLog(isMemorized: Boolean, reviewItem: ReviewItem) {
+        val nowDatetime = DateTimeUtils.getCurrentUtcTime()
         memorizationLogRepository.save(
             MemorizationLog(
                 isMemorized = isMemorized,
@@ -144,6 +146,7 @@ class ReviewItemService(
 
     private fun createReviewDate(itemId: Long, offset: ZoneOffset, cycle: Int) {
         val zoneOffset = offset.toZoneOffset()
+        val nowDatetime = DateTimeUtils.getCurrentUtcTime()
         val zonedCreatedDatetime = nowDatetime.withOffsetSameInstant(zoneOffset)
         val startDatetime = CycleCalculator.getUTCStartDatetime(zonedCreatedDatetime, cycle, zoneOffset)
         val endDatetime = startDatetime.plusHours(24)
