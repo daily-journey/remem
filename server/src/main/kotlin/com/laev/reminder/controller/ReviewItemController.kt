@@ -120,6 +120,10 @@ class ReviewItemController(
         val member = authService.getMemberFromToken(authorizationHeader)
         reviewItemService.updateMemorization(member, id, request.isMemorized!!, request.offset)
 
+        if (!request.isMemorized) {
+            reviewDatetimeService.createNewReviewCycle(id, request.offset)
+        }
+
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build()
     }
 

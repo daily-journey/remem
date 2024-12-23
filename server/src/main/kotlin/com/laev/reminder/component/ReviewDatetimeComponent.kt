@@ -12,7 +12,8 @@ import java.time.ZoneOffset
 class ReviewDatetimeComponent(
     private val reviewDatetimeRepository: ReviewDatetimeRepository,
 ) {
-    fun createReviewDatetimeCycle(offset: ZoneOffset, cycles: List<Int>, reviewItem: ReviewItem) {
+    fun createReviewDatetimeCycle(offset: ZoneOffset, reviewItem: ReviewItem) {
+        val cycles = listOf(1, 3, 7, 21)
         val zonedCreatedDatetime = OffsetDateTime.now(ZoneOffset.UTC).withOffsetSameInstant(offset) // Convert to local UTC time with the applied zoneOffset
 
         for (cycle in cycles) {
