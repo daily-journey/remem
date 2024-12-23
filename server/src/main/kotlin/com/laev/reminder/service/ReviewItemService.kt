@@ -88,7 +88,6 @@ class ReviewItemService(
     @Transactional
     fun addReviewItem(request: AddItemRequest, member: Member) {
         try {
-            val cycles = listOf(1, 3, 7, 21)
             val zoneOffset = request.offset.toZoneOffset()
 
             val newReviewItem = reviewItemRepository.save(
@@ -99,7 +98,7 @@ class ReviewItemService(
                 )
             )
 
-            reviewDatetimeComponent.createReviewDatetimeCycle(zoneOffset, cycles, newReviewItem)
+            reviewDatetimeComponent.createReviewDatetimeCycle(zoneOffset, newReviewItem)
         } catch (e: DataIntegrityViolationException) {
             throw ItemCreationException("Failed to create item due to data integrity violation.")
         } catch (e: Exception) {
