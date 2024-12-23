@@ -88,7 +88,6 @@ class ReviewItemService(
         try {
             val cycles = listOf(1, 3, 7, 21)
             val nowDatetime = DateTimeUtils.getCurrentUtcTime()
-            val reviewDates = CycleCalculator.getReviewDates(nowDatetime, cycles)
 
             val zoneOffset = request.offset.toZoneOffset()
             val zonedCreatedDatetime = nowDatetime.withOffsetSameInstant(zoneOffset) // Convert to local time with the applied zoneOffset
@@ -98,7 +97,6 @@ class ReviewItemService(
                     mainText = request.mainText,
                     subText = request.subText,
                     member = member,
-                    reviewDates = reviewDates.toString(),
                 )
             )
 

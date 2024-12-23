@@ -46,7 +46,6 @@ abstract class BaseIntegrationTest {
             ReviewItem(
                 mainText = "setup item",
                 subText = "",
-                reviewDates = "",
                 member = testMember,
             )
         )

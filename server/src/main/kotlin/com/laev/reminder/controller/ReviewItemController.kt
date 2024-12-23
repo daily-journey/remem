@@ -2,6 +2,7 @@ package com.laev.reminder.controller
 
 import com.laev.reminder.dto.*
 import com.laev.reminder.service.AuthService
+import com.laev.reminder.service.ReviewDatetimeService
 import com.laev.reminder.service.ReviewItemService
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -16,8 +17,9 @@ import java.time.OffsetDateTime
 @RestController
 @RequestMapping("/review-items")
 class ReviewItemController(
-    private val reviewItemService: ReviewItemService,
     private val authService: AuthService,
+    private val reviewItemService: ReviewItemService,
+    private val reviewDatetimeService: ReviewDatetimeService,
 ) {
     @GetMapping
     @Operation(summary = "Get items", description = "Fetch all items or items for a specific date.")
@@ -39,17 +41,16 @@ class ReviewItemController(
             .body(
                 items.map { item ->
                     val count = reviewItemService.getReviewItemMemorizationCount(item.id)
+                    val reviewDates = reviewDatetimeService.getReviewDatetimes(item.id)
                     GetItemsResponse(
-                        id = item.id ?: 0,
+                        id = item.id,
                         mainText = item.mainText,
                         subText = item.subText,
                         createdDatetime = item.createdDatetime,
                         successCount = count.successCount,
                         failCount = count.failCount,
                         isRecurring = item.isRecurring,
-                        reviewDates = item.reviewDates
-                            .removePrefix("[").removeSuffix("]")
-                            .split(", "),
+                        reviewDates = reviewDates,
                     )
                 }
             )
