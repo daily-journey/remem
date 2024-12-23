@@ -1,5 +1,6 @@
 package com.laev.reminder.service
 
+import com.laev.reminder.component.ReviewDatetimeComponent
 import com.laev.reminder.dto.AddItemRequest
 import com.laev.reminder.dto.GetReviewItemsTodayResponse
 import com.laev.reminder.entity.ReviewItem
@@ -29,6 +30,7 @@ class ReviewItemService(
     private val reviewItemRepository: ReviewItemRepository,
     private val reviewDatetimeRepository: ReviewDatetimeRepository,
     private val memorizationLogRepository: MemorizationLogRepository,
+    private val reviewDatetimeComponent: ReviewDatetimeComponent,
 ) {
     fun getReviewItems(datetime: OffsetDateTime?, member: Member): List<ReviewItem> {
         if (datetime == null) {
@@ -87,10 +89,7 @@ class ReviewItemService(
     fun addReviewItem(request: AddItemRequest, member: Member) {
         try {
             val cycles = listOf(1, 3, 7, 21)
-            val nowDatetime = DateTimeUtils.getCurrentUtcTime()
-
             val zoneOffset = request.offset.toZoneOffset()
-            val zonedCreatedDatetime = nowDatetime.withOffsetSameInstant(zoneOffset) // Convert to local time with the applied zoneOffset
 
             val newReviewItem = reviewItemRepository.save(
                 ReviewItem(
@@ -100,18 +99,7 @@ class ReviewItemService(
                 )
             )
 
-            for (cycle in cycles) {
-                val startDatetime = CycleCalculator.getUTCStartDatetime(zonedCreatedDatetime, cycle, zoneOffset)
-                val endDatetime = startDatetime.plusHours(24)
-
-                reviewDatetimeRepository.save(
-                    ReviewDatetime(
-                        start = startDatetime,
-                        end = endDatetime,
-                        reviewItem = newReviewItem,
-                    )
-                )
-            }
+            reviewDatetimeComponent.createReviewDatetimeCycle(zoneOffset, cycles, newReviewItem)
         } catch (e: DataIntegrityViolationException) {
             throw ItemCreationException("Failed to create item due to data integrity violation.")
         } catch (e: Exception) {
