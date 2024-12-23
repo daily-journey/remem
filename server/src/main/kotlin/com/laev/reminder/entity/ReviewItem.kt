@@ -23,9 +23,6 @@ class ReviewItem(
     val isRecurring: Boolean = true,
 
     @Column
-    val reviewDates: String,
-
-    @Column
     var isDeleted: Boolean = false,
 
     @ManyToOne(fetch = FetchType.LAZY)

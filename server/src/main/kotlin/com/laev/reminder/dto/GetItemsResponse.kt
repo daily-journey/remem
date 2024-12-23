@@ -27,5 +27,5 @@ class GetItemsResponse(
     val isRecurring: Boolean,
 
     @Schema(description = "List of upcoming review datetimes in ISO format", example = "[\"2024-10-05T22:09:23Z\", \"2024-10-12T22:09:23Z\"]")
-    val reviewDates: List<String>
+    val reviewDates: List<OffsetDateTime>,
 )

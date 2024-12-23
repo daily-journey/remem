@@ -8,6 +8,8 @@ import java.time.OffsetDateTime
 
 @Repository
 interface ReviewDatetimeRepository: JpaRepository<ReviewDatetime, Long> {
+    fun findByReviewItemId(itemId: Long): List<ReviewDatetime>
+
     @Query("select r from ReviewDatetime r where r.start <= :datetime and :datetime < r.end")
     fun findByDatetimeRange(datetime: OffsetDateTime): List<ReviewDatetime>
 
