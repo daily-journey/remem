@@ -18,12 +18,10 @@ class ReviewDatetimeComponent(
 
         for (cycle in cycles) {
             val startDatetime = CycleCalculator.getUTCStartDatetime(zonedCreatedDatetime, cycle, offset)
-            val endDatetime = startDatetime.plusHours(24)
 
             reviewDatetimeRepository.save(
                 ReviewDatetime(
                     start = startDatetime,
-                    end = endDatetime,
                     reviewItem = reviewItem,
                 )
             )
