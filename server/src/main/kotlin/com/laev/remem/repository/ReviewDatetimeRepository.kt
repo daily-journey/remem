@@ -21,6 +21,14 @@ interface ReviewDatetimeRepository: JpaRepository<ReviewDatetime, Long> {
     @Query("DELETE FROM ReviewDatetime r WHERE r.reviewItem.id = :itemId AND :now < r.start")
     fun deleteUpcomingReviewDates(itemId: Long, now: OffsetDateTime)
 
+    @Modifying
+    @Query("""
+        UPDATE ReviewDatetime r
+        SET r.isMemorized = :isMemorized, r.isSkipped = false
+        WHERE r.start <= :now AND :now < r.end AND r.reviewItem.id = :itemId
+    """)
+    fun updateMemorizationAndMarkNotSkipped(isMemorized: Boolean, now: OffsetDateTime, itemId: Long)
+
     @Query("""
         SELECT r
         FROM ReviewDatetime r
