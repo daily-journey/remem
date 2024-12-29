@@ -26,4 +26,8 @@ class ReviewDatetimeService(
         reviewDatetimeRepository.deleteUpcomingReviewDates(itemId, OffsetDateTime.now())
         reviewDatetimeComponent.createReviewDatetimeCycle(offset, reviewItem)
     }
+
+    fun deleteReviewDatetime(itemId: Long) {
+        reviewDatetimeRepository.deleteAllByReviewItemId(itemId)
+    }
 }
