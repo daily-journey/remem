@@ -4,7 +4,6 @@ import com.laev.remem.component.ReviewDatetimeComponent
 import com.laev.remem.dto.AddItemRequest
 import com.laev.remem.dto.GetReviewItemsTodayResponse
 import com.laev.remem.entity.Member
-import com.laev.remem.entity.MemorizationLog
 import com.laev.remem.entity.ReviewDatetime
 import com.laev.remem.entity.ReviewItem
 import com.laev.remem.enum.ReviewItemStatus
@@ -12,7 +11,6 @@ import com.laev.remem.exception.ConflictException
 import com.laev.remem.exception.ItemAlreadyDeletedException
 import com.laev.remem.exception.ItemCreationException
 import com.laev.remem.exception.ItemNotFoundException
-import com.laev.remem.repository.MemorizationLogRepository
 import com.laev.remem.repository.ReviewDatetimeRepository
 import com.laev.remem.repository.ReviewItemRepository
 import com.laev.remem.service.dto.ReviewItemDetails
@@ -28,7 +26,6 @@ import java.time.ZoneOffset
 class ReviewItemService(
     private val reviewItemRepository: ReviewItemRepository,
     private val reviewDatetimeRepository: ReviewDatetimeRepository,
-    private val memorizationLogRepository: MemorizationLogRepository,
     private val reviewDatetimeComponent: ReviewDatetimeComponent,
 ) {
     fun getReviewItems(datetime: OffsetDateTime?, member: Member): List<ReviewItem> {
@@ -103,25 +100,16 @@ class ReviewItemService(
 
     @Transactional
     fun updateMemorization(member: Member, itemId: Long, isMemorized: Boolean, offset: ZoneOffset) {
-        val item = findItemByMember(member, itemId)
+        this.findItemByMember(member, itemId)
 
-        createMemorizationLog(isMemorized, item)
+        reviewDatetimeRepository.updateMemorizationAndMarkNotSkipped(
+            isMemorized, OffsetDateTime.now(ZoneOffset.UTC), itemId
+        )
 
         // if not memorized, add a new review date for tomorrow
         if (!isMemorized) {
             createReviewDate(itemId, offset, 1)
         }
-    }
-
-    private fun createMemorizationLog(isMemorized: Boolean, reviewItem: ReviewItem) {
-        val nowDatetime = DateTimeUtils.getCurrentUtcTime()
-        memorizationLogRepository.save(
-            MemorizationLog(
-                isMemorized = isMemorized,
-                createdDatetime = nowDatetime,
-                reviewItem = reviewItem,
-            )
-        )
     }
 
     private fun createReviewDate(itemId: Long, offset: ZoneOffset, cycle: Int) {

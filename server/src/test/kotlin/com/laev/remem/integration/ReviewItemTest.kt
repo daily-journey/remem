@@ -1,7 +1,6 @@
 package com.laev.remem.integration
 
 import com.laev.remem.dto.AddItemRequest
-import com.laev.remem.repository.MemorizationLogRepository
 import com.laev.remem.repository.ReviewDatetimeRepository
 import com.laev.remem.utils.ObjectMapperUtil
 import org.junit.jupiter.api.AfterEach
@@ -17,14 +16,12 @@ import java.time.ZoneOffset
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 class ReviewItemTest(
-    @Autowired private val memorizationLogRepository: MemorizationLogRepository,
     @Autowired private val reviewDatetimeRepository: ReviewDatetimeRepository,
 ) : BaseIntegrationTest() {
     private val objectMapper = ObjectMapperUtil.createObjectMapper()
 
     @AfterEach
     fun tearDown() {
-        memorizationLogRepository.deleteAll()
         reviewDatetimeRepository.deleteAll()
         reviewItemRepository.deleteAll()
     }
