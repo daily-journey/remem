@@ -134,7 +134,6 @@ class ReviewItemService(
         val nowDatetime = DateTimeUtils.getCurrentUtcTime()
         val zonedCreatedDatetime = nowDatetime.withOffsetSameInstant(zoneOffset)
         val startDatetime = CycleCalculator.getUTCStartDatetime(zonedCreatedDatetime, cycle, zoneOffset)
-        val endDatetime = startDatetime.plusHours(24)
         val item = reviewItemRepository.getReferenceById(itemId)
 
         // avoid duplicated row insertion
@@ -143,8 +142,7 @@ class ReviewItemService(
             reviewDatetimeRepository.save(
                 ReviewDatetime(
                     start = startDatetime,
-                    end = endDatetime,
-                    reviewItem = item
+                    reviewItem = item,
                 )
             )
         }
