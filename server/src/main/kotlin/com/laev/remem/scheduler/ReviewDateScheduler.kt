@@ -14,7 +14,7 @@ class ReviewDateScheduler(
     private val reviewDatetimeRepository: ReviewDatetimeRepository,
 ) {
     @Transactional
-    @Scheduled(cron = "0 0 0 * * *", zone = "America/New_York")
+    @Scheduled(cron = "0 0,30 0 * * *", zone = "America/New_York")
     fun updateSkippedReviewDatetimes() {
         val now = OffsetDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.HOURS)
         // find past skipped review datetimes
