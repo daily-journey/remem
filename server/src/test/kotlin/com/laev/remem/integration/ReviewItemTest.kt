@@ -61,8 +61,6 @@ class ReviewItemTest(
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].mainText").isString)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].subText").isString)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].createdDatetime").isString)
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].successCount").isNumber)
-            .andExpect(MockMvcResultMatchers.jsonPath("$[0].failCount").isNumber)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].reviewDates").isArray)
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].isRecurring").isBoolean)
     }

@@ -3,20 +3,19 @@ package com.laev.remem.service
 import com.laev.remem.component.ReviewDatetimeComponent
 import com.laev.remem.dto.AddItemRequest
 import com.laev.remem.dto.GetReviewItemsTodayResponse
-import com.laev.remem.entity.ReviewItem
 import com.laev.remem.entity.Member
 import com.laev.remem.entity.MemorizationLog
 import com.laev.remem.entity.ReviewDatetime
+import com.laev.remem.entity.ReviewItem
 import com.laev.remem.enum.ReviewItemStatus
 import com.laev.remem.exception.ConflictException
 import com.laev.remem.exception.ItemAlreadyDeletedException
 import com.laev.remem.exception.ItemCreationException
 import com.laev.remem.exception.ItemNotFoundException
-import com.laev.remem.repository.ReviewItemRepository
 import com.laev.remem.repository.MemorizationLogRepository
 import com.laev.remem.repository.ReviewDatetimeRepository
+import com.laev.remem.repository.ReviewItemRepository
 import com.laev.remem.service.dto.ReviewItemDetails
-import com.laev.remem.service.dto.ReviewItemMemorizationCount
 import com.laev.remem.utils.CycleCalculator
 import com.laev.remem.utils.DateTimeUtils
 import org.springframework.dao.DataIntegrityViolationException
@@ -40,10 +39,6 @@ class ReviewItemService(
         val reviewDatetimes = reviewDatetimeRepository.findByDatetimeRange(datetime)
 
         return reviewDatetimes.map { it.reviewItem }
-    }
-
-    fun getReviewItemMemorizationCount(itemId: Long): ReviewItemMemorizationCount {
-        return memorizationLogRepository.findMemorizationCountsByItemId(itemId)
     }
 
     fun getReviewItemsOfToday(member: Member): List<GetReviewItemsTodayResponse> {
