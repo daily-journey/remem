@@ -11,6 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.transaction.annotation.Transactional
 import java.time.ZoneOffset
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -62,6 +63,7 @@ class ReviewItemTest(
             .andExpect(MockMvcResultMatchers.jsonPath("$[0].isRecurring").isBoolean)
     }
 
+    @Transactional
     @Test
     fun `delete item successfully updates is_deleted column`() {
         val item = reviewItemRepository.findAll().first()
