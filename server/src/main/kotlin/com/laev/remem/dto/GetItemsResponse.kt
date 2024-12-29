@@ -16,12 +16,6 @@ class GetItemsResponse(
     @Schema(description = "Creation datetime in ISO format", example = "2024-10-05T22:09:23Z")
     val createdDatetime: OffsetDateTime,
 
-    @Schema(description = "Number of successful attempts", example = "0")
-    val successCount: Int,
-
-    @Schema(description = "Number of failed attempts", example = "0")
-    val failCount: Int,
-
     @Schema(description = "Flag indicating if the item is exposed repeatedly", example = "true")
     @get:JsonProperty("isRecurring")
     val isRecurring: Boolean,

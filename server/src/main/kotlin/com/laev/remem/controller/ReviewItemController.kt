@@ -40,15 +40,12 @@ class ReviewItemController(
             .headers(responseHeaders)
             .body(
                 items.map { item ->
-                    val count = reviewItemService.getReviewItemMemorizationCount(item.id)
                     val reviewDates = reviewDatetimeService.getReviewDatetimes(item.id)
                     GetItemsResponse(
                         id = item.id,
                         mainText = item.mainText,
                         subText = item.subText,
                         createdDatetime = item.createdDatetime,
-                        successCount = count.successCount,
-                        failCount = count.failCount,
                         isRecurring = item.isRecurring,
                         reviewDates = reviewDates,
                     )
