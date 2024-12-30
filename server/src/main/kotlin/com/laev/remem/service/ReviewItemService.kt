@@ -40,7 +40,7 @@ class ReviewItemService(
 
     fun getReviewItemsOfToday(member: Member): List<GetReviewItemsTodayResponse> {
         val nowDatetime = DateTimeUtils.getCurrentUtcTime()
-        val items = reviewItemRepository.findReviewItemAndMemorizationLogByNowDatetimeAndMemberId(nowDatetime, member.id)
+        val items = reviewItemRepository.findReviewItemOfToday(nowDatetime, member.id)
 
         return items.map {
             val status = when (it.isMemorized) {
@@ -60,10 +60,10 @@ class ReviewItemService(
         val item = findItemByMember(member, itemId)
         val nowDatetime = DateTimeUtils.getCurrentUtcTime()
 
-        val upcomingReviewDates = reviewItemRepository.findUpcomingReviewDatetimeByMemberIdAndReviewItemId(itemId, nowDatetime)
-        val remindTomorrowDates = reviewItemRepository.findRemindTomorrowReviewDatetimeByMemberIdAndReviewItemId(itemId)
-        val memorizedDates = reviewItemRepository.findMemorizedReviewDatetimeByMemberIdAndReviewItemId(itemId)
-        val skippedDates = reviewItemRepository.findSkippedReviewDatetimeByMemberIdAndReviewItemId(itemId, nowDatetime)
+        val upcomingReviewDates = reviewItemRepository.findUpcomingReviewDatetime(itemId, nowDatetime)
+        val remindTomorrowDates = reviewItemRepository.findRequestedDateOfRemindTomorrow(itemId)
+        val memorizedDates = reviewItemRepository.findRequestedDateOfMemorized(itemId)
+        val skippedDates = reviewItemRepository.findSkippedDates(itemId)
 
         return ReviewItemDetails(
             id = itemId,

@@ -17,15 +17,14 @@ interface ReviewItemRepository: JpaRepository<ReviewItem, Long> {
     @Query(
         """
         SELECT new com.laev.remem.repository.dto.ReviewItemsToday(
-            ri.id, ri.mainText, m.isMemorized
+            ri.id, ri.mainText, rd.isMemorized
         )
         FROM ReviewItem ri
-            INNER JOIN ReviewDatetime rd ON rd.reviewItem.id = ri.id AND rd.start <= :datetime AND :datetime < rd.end
-            LEFT JOIN MemorizationLog m ON m.reviewItem.id = ri.id
+            INNER JOIN ReviewDatetime rd ON rd.reviewItem.id = ri.id AND rd.start <= :now AND :now < rd.end
         WHERE ri.member.id = :memberId AND ri.isDeleted = false
     """
     )
-    fun findReviewItemAndMemorizationLogByNowDatetimeAndMemberId(datetime: OffsetDateTime, memberId: Long): List<ReviewItemsToday>
+    fun findReviewItemOfToday(now: OffsetDateTime, memberId: Long): List<ReviewItemsToday>
 
     @Query("""
         SELECT rd.start
@@ -33,32 +32,26 @@ interface ReviewItemRepository: JpaRepository<ReviewItem, Long> {
             INNER JOIN ReviewDatetime rd ON rd.reviewItem.id = ri.id AND :nowDatetime <= rd.end
         WHERE ri.id = :itemId
     """)
-    fun findUpcomingReviewDatetimeByMemberIdAndReviewItemId(itemId: Long, nowDatetime: OffsetDateTime): List<OffsetDateTime>
+    fun findUpcomingReviewDatetime(itemId: Long, nowDatetime: OffsetDateTime): List<OffsetDateTime>
 
     @Query("""
-        SELECT m.createdDatetime
-        FROM ReviewItem ri
-            INNER JOIN MemorizationLog m ON m.reviewItem.id = ri.id AND m.isMemorized = false
-        WHERE ri.id = :itemId
+        SELECT r.start
+        FROM ReviewDatetime r
+        WHERE r.reviewItem.id = :itemId AND r.isMemorized = false
     """)
-    fun findRemindTomorrowReviewDatetimeByMemberIdAndReviewItemId(itemId: Long): List<OffsetDateTime>
+    fun findRequestedDateOfRemindTomorrow(itemId: Long): List<OffsetDateTime>
 
     @Query("""
-        SELECT m.createdDatetime
-        FROM ReviewItem ri
-            INNER JOIN MemorizationLog m ON m.reviewItem.id = ri.id AND m.isMemorized = true
-        WHERE ri.id = :itemId
+        SELECT r.start
+        FROM ReviewDatetime r
+        WHERE r.reviewItem.id = :itemId AND r.isMemorized = true
     """)
-    fun findMemorizedReviewDatetimeByMemberIdAndReviewItemId(itemId: Long): List<OffsetDateTime>
+    fun findRequestedDateOfMemorized(itemId: Long): List<OffsetDateTime>
 
     @Query("""
-        SELECT rd.start
-        FROM ReviewDatetime rd
-            LEFT JOIN MemorizationLog m
-                ON m.reviewItem.id = rd.reviewItem.id
-                AND rd.start <= m.createdDatetime
-                AND m.createdDatetime < rd.end
-        WHERE rd.reviewItem.id = :itemId AND m.id IS NULL AND rd.end <= :nowDatetime
+        SELECT r.start
+        FROM ReviewDatetime r
+        WHERE r.reviewItem.id = :itemId AND r.isSkipped = true
     """)
-    fun findSkippedReviewDatetimeByMemberIdAndReviewItemId(itemId: Long, nowDatetime: OffsetDateTime): List<OffsetDateTime>
+    fun findSkippedDates(itemId: Long): List<OffsetDateTime>
 }
