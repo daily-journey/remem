@@ -1,17 +1,18 @@
 import { useEffect, useState, type ReactNode } from "react";
 
 import useInnerWidth from "@/hooks/use-inner-width";
+import useReviewItemDetail from "@/hooks/use-review-item-detail";
 import { useReviewItemMutation } from "@/hooks/use-review-item-mutation";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Sheet,
   SheetContent,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import useReviewItemDetail from "@/hooks/use-review-item-detail";
 import { parsingSubtext } from "@/lib/text";
 import { LoaderCircle } from "lucide-react";
 
@@ -39,6 +40,18 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
       setSide("right");
     }
   }, [innerWidth]);
+
+  const upcomingReviewDates = itemDetail?.upcomingReviewDates.map(
+    (date) => new Date(date),
+  );
+  const memorizedDates = itemDetail?.memorizedDates.map(
+    (date) => new Date(date),
+  );
+  const skippedDates = itemDetail?.skippedDates.map((date) => new Date(date));
+  const remindTomorrowDates = itemDetail?.remindTomorrowDates.map(
+    (date) => new Date(date),
+  );
+  remindTomorrowDates?.push(new Date("2024-12-29T05:00:00Z"));
 
   return (
     <Sheet>
@@ -80,7 +93,49 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
                 </h4>
 
                 <div className="text-center">
-                  {/* <Calendar selected={reviewDates} /> */}
+                  {upcomingReviewDates &&
+                    memorizedDates &&
+                    skippedDates &&
+                    remindTomorrowDates && (
+                      <Calendar
+                        modifiers={{
+                          review: upcomingReviewDates,
+                          memorized: memorizedDates,
+                          skipped: skippedDates,
+                          remindTomorrow: remindTomorrowDates,
+                        }}
+                        modifiersClassNames={{
+                          review:
+                            "after-content after:border-blue-400 after:m-[2px]",
+                          memorized: "bg-green-200",
+                          skipped: "bg-red-200",
+                          remindTomorrow:
+                            "before-content before:border-yellow-500",
+                        }}
+                      />
+                    )}
+                </div>
+
+                <div className="flex flex-col mt-2 text-left gap-y-1">
+                  <div className="flex text-sm text-gray-400 gap-x-2">
+                    <div className="h-[20px] w-[20px] border-2 border-blue-400"></div>
+                    <p>Upcoming Review Dates</p>
+                  </div>
+
+                  <div className="flex text-sm text-gray-400 gap-x-2">
+                    <div className="h-[20px] w-[20px] bg-green-200"></div>
+                    <p>Memorized Dates</p>
+                  </div>
+
+                  <div className="flex text-sm text-gray-400 gap-x-2">
+                    <div className="h-[20px] w-[20px] bg-red-200"></div>
+                    <p>Skipped Dates</p>
+                  </div>
+
+                  <div className="flex text-sm text-gray-400 gap-x-2">
+                    <div className="h-[20px] w-[20px] border-2 border-yellow-400"></div>
+                    Remind Tomorrow
+                  </div>
                 </div>
               </div>
             </section>
