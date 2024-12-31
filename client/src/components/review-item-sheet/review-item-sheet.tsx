@@ -69,14 +69,14 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
           <section className="flex flex-col justify-between">
             <header>
               <SheetTitle asChild>
-                <h2 className="pb-2 text-3xl font-semibold tracking-tight border-b scroll-m-20 first:mt-0">
+                <h2 className="w-full pb-2 pr-2 text-3xl font-semibold tracking-tight break-all border-b scroll-m-20 first:mt-0">
                   {itemDetail.mainText}{" "}
                   <span className="text-gray-400">(#{itemId})</span>
                 </h2>
               </SheetTitle>
 
               <div className="my-4">
-                <p className="leading-7 [&:not(:first-child)]:mt-6">
+                <p className="leading-7 [&:not(:first-child)]:mt-6 break-all">
                   {parsingSubtext(itemDetail.subText)}
                 </p>
                 <p className="leading-7 [&:not(:first-child)]:mt-6">
@@ -106,7 +106,7 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
                         }}
                         modifiersClassNames={{
                           review:
-                            "after-content after:border-blue-400 after:m-[2px]",
+                            "after-content after:border-blue-400 after:m-[1px]",
                           memorized: "bg-green-200",
                           skipped: "bg-red-200",
                           remindTomorrow:

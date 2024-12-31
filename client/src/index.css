@@ -79,23 +79,17 @@
   }
 
   body {
-    margin: 1rem;
-  }
-
-  body {
     @apply bg-background text-foreground;
 
     font-family: Avenir, Montserrat, Corbel, "URW Gothic", source-sans-pro,
       sans-serif;
     font-weight: normal;
+    margin: 1rem;
   }
 
   .page-title {
     font-family: "Segoe Print", "Bradley Hand", Chilanka, TSCu_Comic, casual,
       cursive;
     font-weight: normal;
-  }
-
-  button {
   }
 }
