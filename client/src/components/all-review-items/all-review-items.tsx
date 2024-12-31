@@ -35,7 +35,7 @@ export default function AllReviewItems() {
               key={item.id}
               trigger={
                 <li>
-                  <Card className="transition-all hover:bg-gray-300">
+                  <Card className="transition-all hover:bg-muted dark:hover:bg-muted">
                     <CardHeader>
                       <CardTitle>{item.mainText}</CardTitle>
                     </CardHeader>

@@ -134,7 +134,7 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
 
                   <div className="flex text-sm text-gray-400 gap-x-2">
                     <div className="h-[20px] w-[20px] border-2 border-yellow-400"></div>
-                    Remind Tomorrow
+                    <p>Remind Tomorrow</p>
                   </div>
                 </div>
               </div>
