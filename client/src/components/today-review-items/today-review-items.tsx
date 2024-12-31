@@ -30,7 +30,9 @@ export default function TodayReviewItems() {
                 <li>
                   <Card className="transition-all hover:bg-muted dark:hover:bg-muted">
                     <CardHeader>
-                      <CardTitle>{item.mainText}</CardTitle>
+                      <CardTitle className="break-all">
+                        {item.mainText}
+                      </CardTitle>
                     </CardHeader>
                   </Card>
                 </li>
