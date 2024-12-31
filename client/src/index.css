@@ -1,6 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .before-content {
+    @apply relative;
+  }
+  .before-content::before {
+    content: "";
+    @apply absolute inset-0 border-2 rounded-lg z-0;
+  }
+  .after-content {
+    @apply relative;
+  }
+  .after-content::after {
+    content: "";
+    @apply absolute inset-0 border-2 rounded-lg z-0;
+  }
+}
 @layer base {
   :root {
     --background: 0 0% 100%;

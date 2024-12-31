@@ -4,7 +4,7 @@ export interface ReviewItemDetail {
   subText: string;
   isRecurring: boolean;
   upcomingReviewDates: string[];
-  remindLaterDates: string[];
+  remindTomorrowDates: string[];
   memorizedDates: string[];
   skippedDates: string[];
 }
