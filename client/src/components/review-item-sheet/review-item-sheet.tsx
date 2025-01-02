@@ -19,6 +19,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { parsingSubtext } from "@/lib/text";
+import { isSameDay } from "date-fns";
 import { Info, LoaderCircle } from "lucide-react";
 
 interface ItemSheetProps {
@@ -55,6 +56,18 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
   const notMemorizedDates = itemDetail?.notMemorizedDates.map(
     (date) => new Date(date),
   );
+
+  const isReviewToday = upcomingReviewDates?.some((date) =>
+    isSameDay(date, new Date()),
+  );
+  const isMemorizedToday = memorizedDates?.some((date) =>
+    isSameDay(date, new Date()),
+  );
+  const isNotMemorizedToday = notMemorizedDates?.some((date) =>
+    isSameDay(date, new Date()),
+  );
+  const hasActionToday =
+    isReviewToday && (isMemorizedToday || isNotMemorizedToday);
 
   return (
     <Sheet>
@@ -143,11 +156,15 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
 
             <footer>
               <div className="flex flex-col w-full gap-y-4">
-                <Button onClick={() => markAsMemorized(itemId)}>
+                <Button
+                  onClick={() => markAsMemorized(itemId)}
+                  disabled={hasActionToday}
+                >
                   Memorized
                 </Button>
                 <Button
                   onClick={() => notMemorized(itemId)}
+                  disabled={hasActionToday}
                   variant="secondary"
                 >
                   Not memorized
