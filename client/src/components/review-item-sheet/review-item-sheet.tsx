@@ -82,7 +82,7 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
         {isItemDetailLoading && <LoaderCircle className="animate-spin" />}
         {itemDetailError && <p>{itemDetailError.message}</p>}
         {itemDetail && (
-          <section className="flex flex-col justify-between">
+          <section className="flex flex-col justify-between h-full">
             <header>
               <SheetTitle asChild>
                 <h2 className="w-full pb-2 pr-2 text-3xl font-semibold tracking-tight break-all border-b scroll-m-20 first:mt-0">
@@ -154,29 +154,35 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
               </div>
             </section>
 
-            <footer>
+            <footer className="pb-6 mt-6">
               <div className="flex flex-col w-full gap-y-4">
-                <Button
-                  onClick={() => markAsMemorized(itemId)}
-                  disabled={hasActionToday}
-                >
-                  Memorized
-                </Button>
-                <Button
-                  onClick={() => notMemorized(itemId)}
-                  disabled={hasActionToday}
-                  variant="secondary"
-                >
-                  Not memorized
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <Info />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>This action will renew the review cycle.</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </Button>
+                {isReviewToday && (
+                  <Button
+                    onClick={() => markAsMemorized(itemId)}
+                    disabled={hasActionToday}
+                  >
+                    Memorized
+                  </Button>
+                )}
+
+                {isReviewToday && (
+                  <Button
+                    onClick={() => notMemorized(itemId)}
+                    disabled={hasActionToday}
+                    variant="secondary"
+                  >
+                    Not memorized
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Info />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>This action will renew the review cycle.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </Button>
+                )}
+
                 <Button
                   onClick={() => deleteItem(itemId)}
                   variant="destructive"
