@@ -51,7 +51,6 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
   const remindTomorrowDates = itemDetail?.remindTomorrowDates.map(
     (date) => new Date(date),
   );
-  remindTomorrowDates?.push(new Date("2024-12-29T05:00:00Z"));
 
   return (
     <Sheet>
