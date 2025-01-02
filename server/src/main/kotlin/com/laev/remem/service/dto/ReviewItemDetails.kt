@@ -8,7 +8,7 @@ data class ReviewItemDetails(
     val subText: String?,
     val isRecurring: Boolean,
     val upcomingReviewDates: List<OffsetDateTime>,
-    val remindTomorrowDates: List<OffsetDateTime>,
+    val notMemorizedDates: List<OffsetDateTime>,
     val memorizedDates: List<OffsetDateTime>,
     val skippedDates: List<OffsetDateTime>,
 )

@@ -45,7 +45,7 @@ class ReviewItemService(
         return items.map {
             val status = when (it.isMemorized) {
                 true -> ReviewItemStatus.MEMORIZED
-                false -> ReviewItemStatus.REMIND_LATER
+                false -> ReviewItemStatus.NOT_MEMORIZED
                 null -> ReviewItemStatus.NO_ACTION
             }
             GetReviewItemsTodayResponse(
@@ -61,8 +61,8 @@ class ReviewItemService(
         val nowDatetime = DateTimeUtils.getCurrentUtcTime()
 
         val upcomingReviewDates = reviewItemRepository.findUpcomingReviewDatetime(itemId, nowDatetime)
-        val remindTomorrowDates = reviewItemRepository.findRequestedDateOfRemindTomorrow(itemId)
-        val memorizedDates = reviewItemRepository.findRequestedDateOfMemorized(itemId)
+        val notMemorizedDates = reviewItemRepository.findNotMemorizedDates(itemId)
+        val memorizedDates = reviewItemRepository.findMemorizedDates(itemId)
         val skippedDates = reviewItemRepository.findSkippedDates(itemId)
 
         return ReviewItemDetails(
@@ -71,7 +71,7 @@ class ReviewItemService(
             subText = item.subText,
             isRecurring = item.isRecurring,
             upcomingReviewDates = upcomingReviewDates,
-            remindTomorrowDates = remindTomorrowDates,
+            notMemorizedDates = notMemorizedDates,
             memorizedDates = memorizedDates,
             skippedDates = skippedDates,
         )

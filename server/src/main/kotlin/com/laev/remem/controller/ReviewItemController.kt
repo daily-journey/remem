@@ -64,7 +64,7 @@ class ReviewItemController(
         return ResponseEntity.ok().body(
             items.map { item ->
                 GetReviewItemsTodayResponse(
-                    id = item.id ?: 0,
+                    id = item.id,
                     mainText = item.mainText,
                     status = item.status,
                 )
@@ -88,7 +88,7 @@ class ReviewItemController(
                 subText = reviewItemDetail.subText,
                 isRecurring = reviewItemDetail.isRecurring,
                 upcomingReviewDates = reviewItemDetail.upcomingReviewDates,
-                remindTomorrowDates = reviewItemDetail.remindTomorrowDates,
+                notMemorizedDates = reviewItemDetail.notMemorizedDates,
                 memorizedDates = reviewItemDetail.memorizedDates,
                 skippedDates = reviewItemDetail.skippedDates,
             )
