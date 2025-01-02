@@ -4,7 +4,7 @@ export interface ReviewItemDetail {
   subText: string;
   isRecurring: boolean;
   upcomingReviewDates: string[];
-  remindTomorrowDates: string[];
+  notMemorizedDates: string[];
   memorizedDates: string[];
   skippedDates: string[];
 }
@@ -28,6 +28,6 @@ export interface TodayItem {
 
 export enum Status {
   MEMORIZED = "MEMORIZED",
-  REMIND_LATER = "REMIND_LATER",
+  NOT_MEMORIZED = "NOT_MEMORIZED",
   NO_ACTION = "NO_ACTION",
 }
