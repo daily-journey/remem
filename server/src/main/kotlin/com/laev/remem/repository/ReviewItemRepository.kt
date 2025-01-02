@@ -39,14 +39,14 @@ interface ReviewItemRepository: JpaRepository<ReviewItem, Long> {
         FROM ReviewDatetime r
         WHERE r.reviewItem.id = :itemId AND r.isMemorized = false
     """)
-    fun findRequestedDateOfRemindTomorrow(itemId: Long): List<OffsetDateTime>
+    fun findNotMemorizedDates(itemId: Long): List<OffsetDateTime>
 
     @Query("""
         SELECT r.start
         FROM ReviewDatetime r
         WHERE r.reviewItem.id = :itemId AND r.isMemorized = true
     """)
-    fun findRequestedDateOfMemorized(itemId: Long): List<OffsetDateTime>
+    fun findMemorizedDates(itemId: Long): List<OffsetDateTime>
 
     @Query("""
         SELECT r.start
