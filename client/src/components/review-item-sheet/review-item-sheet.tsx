@@ -13,8 +13,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { parsingSubtext } from "@/lib/text";
-import { LoaderCircle } from "lucide-react";
+import { Info, LoaderCircle } from "lucide-react";
 
 interface ItemSheetProps {
   trigger: ReactNode;
@@ -27,8 +32,7 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
     data: itemDetail,
     error: itemDetailError,
   } = useReviewItemDetail({ id: itemId });
-  const { markAsMemorized, deleteItem, remindTomorrow } =
-    useReviewItemMutation();
+  const { markAsMemorized, deleteItem, notMemorized } = useReviewItemMutation();
 
   const { innerWidth } = useInnerWidth();
   const [side, setSide] = useState<"bottom" | "right">("right");
@@ -48,7 +52,7 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
     (date) => new Date(date),
   );
   const skippedDates = itemDetail?.skippedDates.map((date) => new Date(date));
-  const remindTomorrowDates = itemDetail?.remindTomorrowDates.map(
+  const notMemorizedDates = itemDetail?.notMemorizedDates.map(
     (date) => new Date(date),
   );
 
@@ -95,21 +99,19 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
                   {upcomingReviewDates &&
                     memorizedDates &&
                     skippedDates &&
-                    remindTomorrowDates && (
+                    notMemorizedDates && (
                       <Calendar
                         modifiers={{
                           review: upcomingReviewDates,
                           memorized: memorizedDates,
                           skipped: skippedDates,
-                          remindTomorrow: remindTomorrowDates,
+                          notMemorized: notMemorizedDates,
                         }}
                         modifiersClassNames={{
-                          review:
-                            "after-content after:border-blue-400 after:m-[1px]",
+                          review: "after-content after:border-blue-400",
                           memorized: "bg-green-200",
                           skipped: "bg-red-200",
-                          remindTomorrow:
-                            "before-content before:border-yellow-500",
+                          notMemorized: "bg-yellow-300",
                         }}
                       />
                     )}
@@ -132,8 +134,8 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
                   </div>
 
                   <div className="flex text-sm text-gray-400 gap-x-2">
-                    <div className="h-[20px] w-[20px] border-2 border-yellow-400"></div>
-                    <p>Remind Tomorrow</p>
+                    <div className="h-[20px] w-[20px] bg-yellow-300"></div>
+                    <p>Not memorized Dates</p>
                   </div>
                 </div>
               </div>
@@ -145,10 +147,18 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
                   Memorized
                 </Button>
                 <Button
-                  onClick={() => remindTomorrow(itemId)}
+                  onClick={() => notMemorized(itemId)}
                   variant="secondary"
                 >
-                  Remind me tomorrow
+                  Not memorized
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Info />
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>This action will renew the review cycle.</p>
+                    </TooltipContent>
+                  </Tooltip>
                 </Button>
                 <Button
                   onClick={() => deleteItem(itemId)}

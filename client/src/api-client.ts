@@ -27,7 +27,7 @@ interface ApiClient {
   getAllItems(criteria: "today" | "all"): Promise<ReviewItem[]>;
   addItem(item: AddItemCommand): Promise<void>;
   markAsMemorized(itemId: number): Promise<void>;
-  remindLater(itemId: number): Promise<void>;
+  notMemorized(itemId: number): Promise<void>;
   deleteItem(itemId: number): Promise<void>;
 
   signUp(command: SignUpCommand): Promise<void>;
@@ -136,7 +136,7 @@ class FetchApiClient implements ApiClient {
     }
   }
 
-  async remindLater(itemId: number): Promise<void> {
+  async notMemorized(itemId: number): Promise<void> {
     const { offset } = getDatetime();
 
     const response = await customFetch(

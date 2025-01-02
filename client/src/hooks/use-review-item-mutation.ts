@@ -19,17 +19,17 @@ export const useReviewItemMutation = () => {
     },
   });
 
-  const { mutate: remindTomorrow } = useMutation({
-    mutationFn: async (id: number) => await apiClient.remindLater(id),
+  const { mutate: notMemorized } = useMutation({
+    mutationFn: async (id: number) => await apiClient.notMemorized(id),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: ["review-items", variables],
       });
-      toast.success("Item will be reminded later.");
+      toast.success("Mark item as not memorized.");
     },
     onError: (error) => {
       console.error(error);
-      toast.error("Failed to remind item later.");
+      toast.error("Failed to mark item as not memorized.");
     },
   });
 
@@ -49,7 +49,7 @@ export const useReviewItemMutation = () => {
 
   return {
     markAsMemorized,
-    remindTomorrow,
+    notMemorized,
     deleteItem,
   };
 };
