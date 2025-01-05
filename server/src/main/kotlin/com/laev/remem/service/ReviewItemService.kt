@@ -147,6 +147,7 @@ class ReviewItemService(
 
         item.isDeleted = true
         reviewItemRepository.save(item)
+        reviewDatetimeRepository.updateAsDeleted(itemId)
     }
 
     private fun findItemByMember(member: Member, itemId: Long): ReviewItem {

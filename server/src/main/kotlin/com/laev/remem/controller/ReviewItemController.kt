@@ -132,7 +132,6 @@ class ReviewItemController(
     ): ResponseEntity<String> {
         val member = authService.getMemberFromToken(authorizationHeader)
         reviewItemService.deleteReviewItem(member, id)
-        reviewDatetimeService.deleteReviewDatetime(id)
 
         return ResponseEntity.ok("Item deleted successfully.")
     }
