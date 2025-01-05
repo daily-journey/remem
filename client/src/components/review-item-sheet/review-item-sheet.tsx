@@ -10,6 +10,8 @@ import { Calendar } from "@/components/ui/calendar";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
+  SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
@@ -28,11 +30,12 @@ interface ItemSheetProps {
 }
 
 export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
+  const [open, setOpen] = useState(false);
   const {
     isLoading: isItemDetailLoading,
     data: itemDetail,
     error: itemDetailError,
-  } = useReviewItemDetail({ id: itemId });
+  } = useReviewItemDetail({ id: itemId, enabled: open });
   const { markAsMemorized, deleteItem, notMemorized } = useReviewItemMutation();
 
   const { innerWidth } = useInnerWidth();
@@ -70,7 +73,7 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
     isReviewToday && (isMemorizedToday || isNotMemorizedToday);
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger className="flex-grow w-full text-left md:w-auto hover:cursor-pointer">
         {trigger}
       </SheetTrigger>
@@ -78,12 +81,25 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
       <SheetContent
         side={side}
         className="md:w-full max-h-[100vh] overflow-auto"
+        aria-describedby="review-item-sheet"
       >
-        {isItemDetailLoading && <LoaderCircle className="animate-spin" />}
-        {itemDetailError && <p>{itemDetailError.message}</p>}
+        <SheetDescription hidden>Review Item({itemId}) Sheet</SheetDescription>
+        {isItemDetailLoading && (
+          <SheetTitle className="flex gap-x-2">
+            <LoaderCircle className="animate-spin" /> Loading ...
+          </SheetTitle>
+        )}
+
+        {itemDetailError && (
+          <>
+            <SheetTitle>Error</SheetTitle>
+            <p>{itemDetailError.message}</p>
+          </>
+        )}
+
         {itemDetail && (
           <section className="flex flex-col justify-between h-full">
-            <header>
+            <SheetHeader>
               <SheetTitle asChild>
                 <h2 className="w-full pb-2 pr-2 text-3xl font-semibold tracking-tight break-all border-b scroll-m-20 first:mt-0">
                   {itemDetail.mainText}{" "}
@@ -95,12 +111,18 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
                 <p className="leading-7 [&:not(:first-child)]:mt-6 break-all">
                   {parsingSubtext(itemDetail.subText)}
                 </p>
-                <p className="leading-7 [&:not(:first-child)]:mt-6">
-                  Next review at{" "}
-                  <Badge>{itemDetail?.upcomingReviewDates[0]}</Badge>
-                </p>
+                <div className="flex gap-x-2">
+                  <p>Next review at </p>
+                  <Badge>
+                    {new Date(
+                      itemDetail?.upcomingReviewDates[0],
+                    ).toLocaleDateString("en-CA", {
+                      dateStyle: "short",
+                    })}
+                  </Badge>
+                </div>
               </div>
-            </header>
+            </SheetHeader>
 
             <section>
               <div className="flex flex-col items-center my-4">
@@ -166,21 +188,21 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
                 )}
 
                 {isReviewToday && (
-                  <Button
-                    onClick={() => notMemorized(itemId)}
-                    disabled={hasActionToday}
-                    variant="secondary"
-                  >
-                    Not memorized
-                    <Tooltip>
-                      <TooltipTrigger>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={() => notMemorized(itemId)}
+                        disabled={hasActionToday}
+                        variant="secondary"
+                      >
+                        Not memorized
                         <Info />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>This action will renew the review cycle.</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </Button>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>This action will renew the review cycle.</p>
+                    </TooltipContent>
+                  </Tooltip>
                 )}
 
                 <Button
