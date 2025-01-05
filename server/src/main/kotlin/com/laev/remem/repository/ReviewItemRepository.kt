@@ -29,7 +29,7 @@ interface ReviewItemRepository: JpaRepository<ReviewItem, Long> {
     @Query("""
         SELECT rd.start
         FROM ReviewItem ri
-            INNER JOIN ReviewDatetime rd ON rd.reviewItem.id = ri.id AND :nowDatetime <= rd.end
+            INNER JOIN ReviewDatetime rd ON rd.reviewItem.id = ri.id AND :nowDatetime <= rd.end AND rd.isMemorized IS NULL
         WHERE ri.id = :itemId
     """)
     fun findUpcomingReviewDatetime(itemId: Long, nowDatetime: OffsetDateTime): List<OffsetDateTime>
