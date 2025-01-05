@@ -28,6 +28,6 @@ class ReviewDatetimeService(
     }
 
     fun deleteReviewDatetime(itemId: Long) {
-        reviewDatetimeRepository.deleteAllByReviewItemId(itemId)
+        reviewDatetimeRepository.updateAsDeleted(itemId)
     }
 }
