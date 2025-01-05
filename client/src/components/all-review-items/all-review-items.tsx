@@ -10,7 +10,7 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 export default function AllReviewItems() {
   const [cookies] = useCookies(["Authorization"]);
   const { data: items, isLoading: areItemsLoading } = useQuery({
-    queryKey: ["review-items"],
+    queryKey: ["review-items", "all"],
     queryFn: () => apiClient.getAllItems(),
     enabled: !!cookies.Authorization,
   });
@@ -24,7 +24,7 @@ export default function AllReviewItems() {
 
   return (
     <section>
-      <ul className="flex flex-wrap justify-between gap-2 ">
+      <ul className="flex flex-col justify-between gap-2 ">
         {areItemsLoading && <p>Loading...</p>}
 
         {sortedItems?.length === 0 && <p>No items to review.</p>}

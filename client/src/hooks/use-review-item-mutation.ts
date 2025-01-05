@@ -7,9 +7,9 @@ export const useReviewItemMutation = () => {
 
   const { mutate: markAsMemorized } = useMutation({
     mutationFn: async (id: number) => await apiClient.markAsMemorized(id),
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["review-items", variables],
+        queryKey: ["review-items"],
       });
       toast.success("Item marked as memorized.");
     },
@@ -21,9 +21,9 @@ export const useReviewItemMutation = () => {
 
   const { mutate: notMemorized } = useMutation({
     mutationFn: async (id: number) => await apiClient.notMemorized(id),
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["review-items", variables],
+        queryKey: ["review-items"],
       });
       toast.success("Mark item as not memorized.");
     },
