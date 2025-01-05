@@ -22,8 +22,8 @@ interface ReviewDatetimeRepository: JpaRepository<ReviewDatetime, Long> {
     fun deleteUpcomingReviewDates(itemId: Long, now: OffsetDateTime)
 
     @Modifying
-    @Query("DELETE FROM ReviewDatetime r WHERE r.reviewItem.id = :itemId")
-    fun deleteAllByReviewItemId(itemId: Long)
+    @Query("UPDATE ReviewDatetime r SET r.isDeleted = true WHERE r.reviewItem.id = :itemId")
+    fun updateAsDeleted(itemId: Long)
 
     @Modifying
     @Query("""
