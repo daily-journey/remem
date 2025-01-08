@@ -25,4 +25,6 @@ export const parsingSubtext = (subText: string): ReactNode => {
       return <span key={index}>{text}</span>;
     });
   }
+
+  return subText;
 };
