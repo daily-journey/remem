@@ -2,7 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useCookies } from "react-cookie";
 
 import { apiClient } from "@/api-client";
+import { Status } from "@/contract/server";
 
+import ReviewItemContextMenu from "@/components/review-item-context-menu/review-item-context-menu";
 import ReviewItemSheet from "@/components/review-item-sheet/review-item-sheet";
 
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,15 +36,21 @@ export default function AllReviewItems() {
             <ReviewItemSheet
               key={item.id}
               trigger={
-                <li>
-                  <Card className="transition-all hover:bg-muted dark:hover:bg-muted">
-                    <CardHeader>
-                      <CardTitle className="break-all">
-                        {item.mainText}
-                      </CardTitle>
-                    </CardHeader>
-                  </Card>
-                </li>
+                <ReviewItemContextMenu
+                  reviewItemId={item.id}
+                  // TODO: should be changed, currently itemDetail has no status.
+                  reviewItemStatus={Status.NOT_MEMORIZED}
+                >
+                  <li>
+                    <Card className="transition-all hover:bg-muted dark:hover:bg-muted">
+                      <CardHeader>
+                        <CardTitle className="break-all">
+                          {item.mainText}
+                        </CardTitle>
+                      </CardHeader>
+                    </Card>
+                  </li>
+                </ReviewItemContextMenu>
               }
               itemId={item.id}
             />
