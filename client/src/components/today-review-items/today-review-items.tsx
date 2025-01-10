@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useCookies } from "react-cookie";
 
 import { apiClient } from "@/api-client";
+import ReviewItemContextMenu from "@/components/review-item-context-menu/review-item-context-menu";
 import ReviewItemSheet from "@/components/review-item-sheet/review-item-sheet";
 
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,7 +38,7 @@ export default function TodayReviewItems() {
     <section>
       <h2 className="flex items-center mt-6 mb-2 font-bold gap-x-2">
         <Inbox />
-        Not Actioned
+        No Action
       </h2>
       {itemsByAction.NO_ACTION ? (
         <ul className="flex flex-wrap justify-between gap-2 ">
@@ -47,15 +48,14 @@ export default function TodayReviewItems() {
                 key={item.id}
                 itemId={item.id}
                 trigger={
-                  <li>
-                    <Card className="transition-all hover:bg-muted dark:hover:bg-muted">
-                      <CardHeader>
-                        <CardTitle className="break-all">
-                          {item.mainText}
-                        </CardTitle>
-                      </CardHeader>
-                    </Card>
-                  </li>
+                  <ReviewItemContextMenu
+                    reviewItemId={item.id}
+                    reviewItemStatus={item.status}
+                  >
+                    <li>
+                      <TodayReviewItem mainText={item.mainText} />
+                    </li>
+                  </ReviewItemContextMenu>
                 }
               />
             );
@@ -77,15 +77,14 @@ export default function TodayReviewItems() {
                 key={item.id}
                 itemId={item.id}
                 trigger={
-                  <li>
-                    <Card className="transition-all hover:bg-muted dark:hover:bg-muted">
-                      <CardHeader>
-                        <CardTitle className="break-all">
-                          {item.mainText}
-                        </CardTitle>
-                      </CardHeader>
-                    </Card>
-                  </li>
+                  <ReviewItemContextMenu
+                    reviewItemId={item.id}
+                    reviewItemStatus={item.status}
+                  >
+                    <li>
+                      <TodayReviewItem mainText={item.mainText} />
+                    </li>
+                  </ReviewItemContextMenu>
                 }
               />
             );
@@ -107,15 +106,14 @@ export default function TodayReviewItems() {
                 key={item.id}
                 itemId={item.id}
                 trigger={
-                  <li>
-                    <Card className="transition-all hover:bg-muted dark:hover:bg-muted">
-                      <CardHeader>
-                        <CardTitle className="break-all">
-                          {item.mainText}
-                        </CardTitle>
-                      </CardHeader>
-                    </Card>
-                  </li>
+                  <ReviewItemContextMenu
+                    reviewItemId={item.id}
+                    reviewItemStatus={item.status}
+                  >
+                    <li>
+                      <TodayReviewItem mainText={item.mainText} />
+                    </li>
+                  </ReviewItemContextMenu>
                 }
               />
             );
@@ -125,5 +123,18 @@ export default function TodayReviewItems() {
         <p>No items you didn&apos;t memorize today.</p>
       )}
     </section>
+  );
+}
+
+interface TodayReviewItemProps {
+  mainText: string;
+}
+function TodayReviewItem({ mainText }: TodayReviewItemProps) {
+  return (
+    <Card className="transition-all hover:bg-muted dark:hover:bg-muted">
+      <CardHeader>
+        <CardTitle className="break-all">{mainText}</CardTitle>
+      </CardHeader>
+    </Card>
   );
 }
