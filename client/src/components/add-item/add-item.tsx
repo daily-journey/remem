@@ -57,7 +57,7 @@ export default function AddItem() {
         mainText: values.mainText,
         subText: values.subText,
       });
-      await queryClient.refetchQueries({ queryKey: ["review-items"] });
+      await queryClient.invalidateQueries({ queryKey: ["review-items"] });
       toast.success("Item added.");
       setError(null);
       setOpen(false);
