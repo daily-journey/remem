@@ -21,6 +21,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { parsingSubtext } from "@/lib/text";
+import { useQueryClient } from "@tanstack/react-query";
 import { isSameDay } from "date-fns";
 import { Info, LoaderCircle } from "lucide-react";
 
@@ -30,6 +31,7 @@ interface ItemSheetProps {
 }
 
 export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const {
     isLoading: isItemDetailLoading,
@@ -73,7 +75,15 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
     isReviewToday && (isMemorizedToday || isNotMemorizedToday);
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet
+      open={open}
+      onOpenChange={(open) => {
+        if (!open) {
+          queryClient.refetchQueries({ queryKey: ["review-items"] });
+        }
+        setOpen(open);
+      }}
+    >
       <SheetTrigger className="flex-grow w-full text-left md:w-auto hover:cursor-pointer">
         {trigger}
       </SheetTrigger>
