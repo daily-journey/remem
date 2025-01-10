@@ -36,9 +36,8 @@ export const useReviewItemMutation = () => {
   const { mutate: deleteItem } = useMutation({
     mutationFn: async (id: number) => await apiClient.deleteItem(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["review-items"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["review-items", "today"] });
+      queryClient.invalidateQueries({ queryKey: ["review-items", "all"] });
       toast.success("Item deleted.");
     },
     onError: (error) => {
