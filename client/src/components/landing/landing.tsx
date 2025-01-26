@@ -11,7 +11,7 @@ export default function Landing({ phase, changePhase }: Props) {
   return (
     <section className="min-h-screen">
       {/* Hero Section */}
-      <section className="text-center bg-gradient-to-br from-pink-500 via-yellow-500 to-green-300 py-20">
+      <section className="text-center py-20">
         <h1 className="text-6xl font-extrabold tracking-tight lg:text-7xl">
           Re:Mem
         </h1>
