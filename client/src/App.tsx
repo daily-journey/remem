@@ -3,15 +3,14 @@ import { useCookies } from "react-cookie";
 
 import AddItem from "@/components/add-item/add-item";
 import AllReviewItems from "@/components/all-review-items/all-review-items";
-import SignInForm from "@/components/auth/sign-in-form";
-import SignUpForm from "@/components/auth/sign-up-form";
 import TodayReviewItems from "@/components/today-review-items/today-review-items";
 
 import { ModeToggle } from "@/components/mode-toogle";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Landing from "./components/landing/landing";
 
-enum UserPhase {
+export enum UserPhase {
   SignUp,
   LogIn,
   LoggedIn,
@@ -32,7 +31,7 @@ function App() {
   return (
     <main className="flex flex-col items-center w-full min-w-[340px]">
       <div className="w-full max-w-[710px]">
-        {phase === UserPhase.LoggedIn && (
+        {phase === UserPhase.LoggedIn ? (
           <>
             <div className="flex items-start justify-between h-12 mb-2">
               <h1 className="text-4xl font-extrabold tracking-tight scroll-m-20 lg:text-5xl page-title">
@@ -72,14 +71,8 @@ function App() {
               </TabsContent>
             </Tabs>
           </>
-        )}
-
-        {phase === UserPhase.LogIn && (
-          <SignInForm showSignUpForm={() => setPhase(UserPhase.SignUp)} />
-        )}
-
-        {phase === UserPhase.SignUp && (
-          <SignUpForm onSignUpSuccess={() => setPhase(UserPhase.LogIn)} />
+        ) : (
+          <Landing phase={phase} changePhase={(phase) => setPhase(phase)} />
         )}
       </div>
     </main>
