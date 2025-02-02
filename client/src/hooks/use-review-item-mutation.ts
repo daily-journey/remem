@@ -5,7 +5,7 @@ import { toast } from "sonner";
 export const useReviewItemMutation = () => {
   const queryClient = useQueryClient();
 
-  const { mutate: markAsMemorized } = useMutation({
+  const { mutateAsync: markAsMemorized } = useMutation({
     mutationFn: async (id: number) => await apiClient.markAsMemorized(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["review-items", id] });
@@ -17,7 +17,7 @@ export const useReviewItemMutation = () => {
     },
   });
 
-  const { mutate: notMemorized } = useMutation({
+  const { mutateAsync: notMemorized } = useMutation({
     mutationFn: async (id: number) => await apiClient.notMemorized(id),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: ["review-items", id] });
@@ -29,7 +29,7 @@ export const useReviewItemMutation = () => {
     },
   });
 
-  const { mutate: deleteItem } = useMutation({
+  const { mutateAsync: deleteItem } = useMutation({
     mutationFn: async (id: number) => await apiClient.deleteItem(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["review-items", "today"] });
