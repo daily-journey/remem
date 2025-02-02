@@ -89,6 +89,7 @@ export default function ReviewItemSheet({ itemId, trigger }: ItemSheetProps) {
       </SheetTrigger>
 
       <SheetContent
+        forceMount
         side={side}
         className="md:w-full max-h-[100vh] overflow-auto"
         aria-describedby="review-item-sheet"
