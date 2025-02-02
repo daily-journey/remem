@@ -73,7 +73,7 @@ export default function Landing({ phase, changePhase }: Props) {
 
         <section className="relative flex-1 px-4 lg:py-20">
           <img
-            src="/remem_calendar.png"
+            src="./remem_calendar.png"
             alt="calendar image"
             className="w-full h-full object-cover md:rounded-[18px]"
           />
