@@ -34,10 +34,12 @@ export default function ReviewItemContextMenu({
           <>
             <ContextMenuItem
               className="flex items-center gap-x-2"
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.stopPropagation();
-                markAsMemorized(reviewItemId);
-                queryClient.invalidateQueries({ queryKey: ["review-items"] });
+                await markAsMemorized(reviewItemId);
+                await queryClient.invalidateQueries({
+                  queryKey: ["review-items"],
+                });
               }}
             >
               <CircleCheck size={20} />
@@ -45,10 +47,12 @@ export default function ReviewItemContextMenu({
             </ContextMenuItem>
             <ContextMenuItem
               className="flex items-center gap-x-2"
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.stopPropagation();
-                notMemorized(reviewItemId);
-                queryClient.invalidateQueries({ queryKey: ["review-items"] });
+                await notMemorized(reviewItemId);
+                await queryClient.invalidateQueries({
+                  queryKey: ["review-items"],
+                });
               }}
             >
               <CircleArrowRight size={20} />
