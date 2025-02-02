@@ -23,6 +23,7 @@ class SecurityConfig {
     fun corsConfigurationSource(): CorsConfigurationSource {
         val configuration = CorsConfiguration()
         configuration.allowedOrigins = listOf("http://localhost:5173", "https://daily-journey.github.io")
+        configuration.allowedOriginPatterns = listOf("http://10.88.111.*")
         configuration.allowedMethods = listOf("*")
         configuration.allowedHeaders = listOf("*")
         configuration.allowCredentials = true // Allow credentials (cookies)
