@@ -29,9 +29,9 @@ function App() {
   }, [cookies.Authorization]);
 
   return (
-    <main className="flex flex-col items-center w-full min-w-[340px]">
+    <main className="flex flex-col items-center w-full min-w-[340px] safe-inset-padding">
       {phase === UserPhase.LoggedIn ? (
-        <div className="w-full max-w-[710px]">
+        <div className="w-full max-w-[710px] p-4">
           <div className="flex items-start justify-between h-12 mb-2">
             <h1 className="text-4xl font-extrabold tracking-tight scroll-m-20 lg:text-5xl page-title">
               Review Notes

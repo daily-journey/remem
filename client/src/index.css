@@ -17,6 +17,13 @@
     content: "";
     @apply absolute inset-0 z-0 border-2 rounded-lg;
   }
+
+  .safe-inset-padding {
+    padding-top: env(safe-area-inset-top);
+    padding-right: env(safe-area-inset-right);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+  }
 }
 @layer base {
   :root {
