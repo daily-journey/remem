@@ -61,7 +61,7 @@ export default function SignInForm({ showSignUpForm }: Props) {
     },
   });
 
-  function onSignUp(values: SignInFormValues) {
+  function onSignIn(values: SignInFormValues) {
     signIn(values);
   }
 
@@ -70,7 +70,7 @@ export default function SignInForm({ showSignUpForm }: Props) {
       <h2 className="mb-6 text-3xl font-bold text-center">Sign In</h2>
       <div className="max-w-sm p-6 mx-auto bg-transparent border border-gray-300 rounded-lg shadow-md">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSignUp)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSignIn)} className="space-y-4">
             <FormField
               control={form.control}
               name="email"
@@ -100,11 +100,25 @@ export default function SignInForm({ showSignUpForm }: Props) {
             />
 
             <Button type="submit" className="w-full">
-              Submit
+              Sign in
             </Button>
           </form>
 
-          {signInStatus === "pending" && <p>Loading...</p>}
+          <Button
+            className="w-full mt-4 bg-slate-400 hover:bg-slate-500"
+            onClick={() => {
+              const demoEmail = "guest@welcome.remem";
+
+              signIn({
+                email: demoEmail,
+                password: demoEmail + demoEmail,
+              });
+            }}
+          >
+            Sign in as a Guest
+          </Button>
+
+          {signInStatus === "pending" && <p className="mt-4">Loading...</p>}
           {signInStatus === "error" && (
             <p className="mt-4 text-red-600">
               Signin Failed. Please try again.
