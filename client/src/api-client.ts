@@ -76,7 +76,8 @@ class FetchApiClient implements ApiClient {
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to sign up: ${command.email}`);
+      const result = await response.json();
+      throw new Error(`Failed to sign up: ${result.error}`);
     }
   }
 

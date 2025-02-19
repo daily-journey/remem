@@ -47,8 +47,7 @@ export default function SignUpForm({ onSignUpSuccess }: Props) {
       onSignUpSuccess();
     },
     onError: (error) => {
-      console.error(error);
-      toast.error("Failed to sign up");
+      toast.error(error.message);
     },
   });
 
